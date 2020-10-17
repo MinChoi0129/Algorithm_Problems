@@ -1,16 +1,24 @@
-import sys
-n, m = map(int, sys.stdin.readline().rstrip().split())
-cut_meter = 1
-stack = 0
-down = 0
-trees = list(map(int, sys.stdin.readline().rstrip().split()))
-h = max(trees)
+n, m = map(int, input().split())
+trees = list(map(int, input().split()))
 
-while stack < m:
-    for i in range(len(trees)):
-        if trees[i] > h - down:
-            trees[i] -= cut_meter
-            stack += 1
-    down += 1
-print(h - (down - 1))
-    
+def cut(cut_height):
+    stack = 0
+    for tree in trees:
+        if tree > cut_height:
+            stack += (tree - cut_height)
+    return stack
+
+def BS(m):
+    start = 0
+    end = max(trees)
+    answer = []
+    while start <= end:
+        mid = (start + end) // 2
+        if cut(mid) >= m:
+            start = mid + 1
+            answer.append(mid)
+        else:
+            end = mid - 1
+    return max(answer)
+
+print(BS(m))
