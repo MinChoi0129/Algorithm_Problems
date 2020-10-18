@@ -2,7 +2,7 @@ import os
 from time import sleep
 current_stone_color = "black"
 board = []
-
+#대각선 수정 필요
 def game_init():
     global board
     global current_stone_color
