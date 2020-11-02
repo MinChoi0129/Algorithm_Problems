@@ -1,3 +1,13 @@
+a, b = input().split()
+
+# y = int(x, num) : x를 num진수로 인식하여 10진수로 바꾼 후 y에 대입하여라.
+
+a = int(a, 2)
+b = int(b, 2)
+
+print(bin(a + b)[2:])
+
+"""
 def bin_to_dec(num):
     new_num_0 = []
     new_num_1 = []
@@ -40,3 +50,4 @@ def print_dec_to_bin(num):
 
 a = bin_to_dec(list(input().split()))
 print_dec_to_bin(a[0] + a[1])
+"""
