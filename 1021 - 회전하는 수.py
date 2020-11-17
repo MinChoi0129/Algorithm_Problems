@@ -32,6 +32,3 @@ for i in find: # 숫자를 리스트 화
     pop_first()
 
 print(left_count + right_count)
-                
-    
-    

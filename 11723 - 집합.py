@@ -1,3 +1,4 @@
+"""
 import sys
 
 s = []
@@ -79,3 +80,4 @@ for _ in range(m):
     else:
         cmd = list(cmd.split())
         calc(cmd[0], int(cmd[1]))
+"""
