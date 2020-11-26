@@ -9,7 +9,8 @@ bj_board = Canvas(600, 400, 'dark green', 'Blackjack')
 
 
 class Card:
-    pass
+    def card_string(self):
+    	return self.face + " of " + self.suit
 
 
 def create_deck():
@@ -32,10 +33,6 @@ def hand_value(hand):
     for card in hand:
         sum_of_values += card.value
     return sum_of_values
-
-
-def card_string(card):
-    return card.face + " of " + card.suit
 
 
 def ask_yesno(prompt):
@@ -120,7 +117,7 @@ def main():
 
         # initial two dealings
         card = deck.pop()
-        print("You are dealt " + card_string(card))
+        print("You are dealt " + card.card_string())
         player.append(card)
 
         card = deck.pop()
@@ -129,11 +126,11 @@ def main():
         dealer.append(card)
 
         card = deck.pop()
-        print("You are dealt " + card_string(card))
+        print("You are dealt " + card.card_string())
         player.append(card)
 
         card = deck.pop()
-        print("Dealer is dealt " + card_string(card) + "\n")
+        print("Dealer is dealt " + card.card_string() + "\n")
         dealer.append(card)
 
         print("Your total is", hand_value(player), "\n")
@@ -143,7 +140,7 @@ def main():
         while hand_value(player) < 21 and ask_yesno("Would you like another card? (y/n) "):
             # draw a card for the player
             card = deck.pop()
-            print("You are dealt " + card_string(card))
+            print("You are dealt " + card.card_string())
             player.append(card)
             print("Your total is", hand_value(player), "\n")
 
@@ -155,10 +152,10 @@ def main():
             draw_card(dealer, player)
         else:
             # draw cards for the dealer while the dealer's score is less than 17
-            print("The dealer's hidden card was " + card_string(dealer[0]))
+            print("The dealer's hidden card was " + dealer[0].card_string())
             while hand_value(dealer) < 17:
                 card = deck.pop()
-                print("Dealer is dealt " + card_string(card))
+                print("Dealer is dealt " + card.card_string())
                 dealer.append(card)
                 print("The dealer's total is", hand_value(dealer), "\n")
 
