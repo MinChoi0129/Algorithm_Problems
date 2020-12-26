@@ -23,7 +23,7 @@ def words_appending(puzzle):
 
 words = []
 puzzle_horizon = []
-puzzle_vertial = []
+puzzle_vertical = []
 
 r, c = map(int, sys.stdin.readline().rstrip().split())
 
@@ -34,11 +34,11 @@ for y in range(c): # 단어를 세로로 볼 때
     tmp = []
     for x in range(r):
         tmp.append(puzzle_horizon[x][y])
-    puzzle_vertial.append(tmp)
+    puzzle_vertical.append(tmp)
 
 
 words_appending(puzzle_horizon)
-words_appending(puzzle_vertial)
+words_appending(puzzle_vertical)
 
 words.sort()
 print(words[0])
