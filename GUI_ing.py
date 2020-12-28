@@ -1,9 +1,10 @@
-from tkinter import *
+from tkinter import Tk, Listbox, Scrollbar, Label, Button, Entry, Radiobutton, IntVar
 from tkinter import ttk, messagebox
 from PIL import ImageGrab
-from TEXT_processing import Lecture, time_table, getItemsBySubTheme, setClassInfo, test
-import datetime, os
-import random
+from TEXT_processing import time_table, getItemsBySubTheme, setClassInfo
+from itertools import product
+import datetime, random
+
 
 ################################################################
 ##########       global variables 정의 및 초기화       ##########
@@ -11,15 +12,6 @@ import random
 
 window = Tk()
 subject_list = Listbox()
-tab3_frame1 = Frame()
-tab3_frame3 = Frame()
-
-lecture_objs = time_table("timetable.txt")
-for obj in lecture_objs:
-    setClassInfo(obj)
-searched_objs = []
-selected_groups = [[], [], [], [], [], [], [], [], [], []]
-
 window.title("TimeTable")
 window.attributes('-fullscreen', True)
 tab_control = ttk.Notebook(window)
@@ -30,6 +22,18 @@ tab_control.add(tab1, text='과목선택')
 tab_control.add(tab2, text='그룹')
 tab_control.add(tab3, text='결과보기')
 tab_control.pack(expand=1, fill='both')
+tab3_frame1, tab2_frame2, tab3_frame3 = ttk.Frame(), ttk.Frame(), ttk.Frame()
+
+lecture_objs = time_table("timetable.txt")
+for obj in lecture_objs:
+    setClassInfo(obj)
+
+searched_objs = []
+selected_groups = [[], [], [], [], [], [], [], [], [], []]
+day_name = ["", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
+time_list = ["9", "10", "11", "12", "1", "2", "3", "4", "5", "6", "7", "8", "9"]
+com_num_list = []
+test_lists = []
 
 역교 = ["None", "필수역량교양", "선택역량교양"]
 통교 = ["None", "문학과문화", "역사와철학", "인간과사회", "과학과기술", "예술과체육", "융복합영역"]
@@ -39,23 +43,10 @@ tab_control.pack(expand=1, fill='both')
 일반 = ["None", "일반선택"]
 전공 = ["None", "전공필수", "전공선택"]
 
-clear_cmd = "cls" if os.name == "nt" else "clear"
-
 
 ##############################################################
 ###################        함수 정의        ###################
 ##############################################################
-
-
-def in_out_test():
-    global selected_groups
-    os.system(clear_cmd)
-    for i in range(len(selected_groups)):
-        print("[그룹" + str(i + 1) + "]")
-        test(selected_groups[i])
-        print("--------------------------")
-        if i == 9:
-            print()
 
 
 def In_Lecture():    # In버튼 누르면 group에 추가
@@ -79,75 +70,11 @@ def In_Lecture():    # In버튼 누르면 group에 추가
         selected_groups[chosen_group].append(searched_objs[idx])
         messagebox.showinfo("성공", "과목을 담았습니다.")
         tab2_list_boxes[chosen_group].insert("end", selected_groups[chosen_group][-1].get_brief_info())
-        in_out_test()
 
 
 def exit_window():    # 프로그램 종료
     global window
-
     window.destroy()
-
-
-def see_combi2():  # 선택된 조합 적용
-    global tab3_frame1, tab3_frame3
-    com_num = combi.current()
-    com_num_list.append(com_num)
-    tab3_frame3 = Frame(tab3)
-    tab3_frame3.grid(row=0, column=0)
-
-    for i in range(0, 7):  # 시간표 틀(흰)
-        Label(tab3_frame3, text=day_name[i], width=10, bg="RoyalBlue",fg = "white").grid(row=1, column=i)
-        for k in range(len(time_list)):
-            if i == 0:
-                Label(tab3_frame3, text=time_list[k], width=10, height=3, bg="white", anchor="n").grid(row=k + 2,column=i)
-            else:
-                Label(tab3_frame3, width=10, height=3, bg="white", relief='solid', bd=0.1).grid(row=k + 2, column=i)
-
-    time_color_list = ['#181A2C','#152747','#1F3767','#496B91','#025373','#012E40','#186884','#63B6BF','#67B8DE','#91C9E8','#3399CC', '#5F7ED9'] #14가지 색상(청색계열)
-    random.shuffle(time_color_list)
-
-    """  
-    1. 모든 칸에 과목명을 띄운다
-    2. 첫 칸에만 과목명을 띄운다
-
-    의견 묻기
-
-    """
-    """for lectures in range(len(test_lists[com_num])): # 과목 수
-        for lecture_day in range(len(test_lists[com_num][lectures].day)): #과목의 쪼개진 요일
-        for classtime in range(len((test_lists[com_num][lectures].day)[lecture_day])-2): ##과목의 차시 (요일과 첫 교시를 빼야하므로 -2)
-            c_time = (test_lists[com_num][lectures].day)[lecture_day][2:]
-            first_time = (test_lists[com_num][lectures].day)[lecture_day][1]
-            other_time = c_time[classtime]
-
-            #시간표 첫 칸(과목명 표시)
-            num_label = Label(tab3_frame3, text=test_lists[com_num][lectures].name, width=10, height=3, bg=time_color_list[lectures], bd=1, fg='white', highlightbackground='darkgrey')
-            num_label.grid(row= first_time + 1, column=(test_lists[com_num][lectures].day)[lecture_day][0] + 1)
-
-            #나머지 칸들 (과목명 표시 안함)
-            num_label = Label(tab3_frame3, width=10, height=3, bg=time_color_list[lectures], bd=1, fg = 'white',highlightbackground = 'darkgrey')
-            num_label.grid(row= other_time+ 1, column=(test_lists[com_num][lectures].day)[lecture_day][0] + 1)"""
-
-    for lectures in range(len(test_lists[com_num])):  # 과목 수
-        for lecture_day in range(len(test_lists[com_num][lectures].day)):  # 과목 쪼개진 요일
-            for classtime in range(len((test_lists[com_num][lectures].day)[lecture_day]) - 1):  # 차시
-                c_time = (test_lists[com_num][lectures].day)[lecture_day][1:]
-                c = c_time[classtime]
-                num_label = Label(tab3_frame3, text=test_lists[com_num][lectures].name, width=10, height=3, bg=time_color_list[lectures], bd=1,fg='white', highlightbackground = 'darkgrey')
-                num_label.grid(row=c + 1, column=(test_lists[com_num][lectures].day)[lecture_day][0] + 1)
-
-
-def see_combi():
-    global tab3_frame1, tab3_frame3
-    com_get = combi.get()
-    if com_get == 'None':
-        messagebox.showinfo("선택된 시간표 없음", '시간표를 선택해주세요')
-    else:
-        if len(com_num_list) == 0:
-            tab3_frame1.destroy()
-        else:
-            tab3_frame3.destroy()
-        see_combi2()
 
 
 def search_subjects():    # Search버튼 누르면 조건에 맞는 강의들을 보여줌
@@ -275,8 +202,8 @@ def search_subjects():    # Search버튼 누르면 조건에 맞는 강의들을
     scrollbar.pack(side="right", fill="y")
     subject_list.config(yscrollcommand=scrollbar.set)
 
-    search_by_name_or_prof.delete(0,'end')
-    search_by_name_or_prof.insert(0,"강의명 또는 교수명을 입력하세요")
+    search_by_name_or_prof.delete(0, 'end')
+    search_by_name_or_prof.insert(0, "강의명 또는 교수명을 입력하세요")
 
 
 def shot():
@@ -287,12 +214,111 @@ def shot():
 
 
 def combinating():
-    return
+    global tab3_frame2, test_lists
+    test_lists = []
+    real_groups = []
+    all_possible_case = []
+    msg = ""
+    for group in selected_groups:
+        if len(group) != 0:
+            real_groups.append(group)
+    all_case = list(product(*real_groups))
+    for i in all_case:
+        if is_possible_combination(i):
+            all_possible_case.append(i)
 
+    if len(all_possible_case) >= 60:
+        test_lists = random.sample(all_possible_case, 60)
+        msg = str(len(all_possible_case)) + "가지의 시간표 중 60개를 생성하였습니다.\n결과보기 탭에서 확인하세요."
+    else:
+        random.shuffle(all_possible_case)
+        test_lists = all_possible_case
+        msg = str(len(test_lists)) + "가지의 시간표가 생성되었습니다.\n결과보기 탭에서 확인하세요."
+
+    messagebox.showinfo("조합성공", msg)
+
+
+    #####################################
+    #######   tab 3-2 (결과보기)   #######
+    #####################################
+    frame_in_frame = ttk.Frame(tab3_frame2)
+    frame_in_frame.grid(row=4, column=7)
+    combi = Listbox(frame_in_frame, width=5, height=5)
+    for i in range(len(test_lists)):
+        combi.insert(i, i + 1)
+    combi.pack(side="left")
+    scb = Scrollbar(frame_in_frame, command=first_list.yview)
+    scb.pack(side = "right", fill = "y")
+    combi.config(yscrollcommand=scb.set)
+    
+    
+    def see_combi2():  # 선택된 조합 적용
+        global tab3_frame1, tab3_frame3, test_lists
+        com_num = -1
+        tab3_frame3 = ttk.Frame(tab3)
+        tab3_frame3.grid(row=0, column=0)
+        for i in range(0, 7):  # 시간표 틀(흰)
+            Label(tab3_frame3, text=day_name[i], width=10, bg="RoyalBlue", fg="white").grid(row=1, column=i)
+            for k in range(len(time_list)):
+                if i == 0:
+                    Label(tab3_frame3, text=time_list[k], width=10, height=3, bg="white", anchor="n").grid(row=k + 2, column=i)
+                else:
+                    Label(tab3_frame3, width=10, height=3, bg="white",relief='solid', bd=0.1).grid(row=k + 2, column=i)
+                    
+        time_color_list = ['#181A2C', '#152747', '#1F3767', '#496B91', '#025373', '#012E40','#186884', '#63B6BF', '#67B8DE', '#91C9E8', '#3399CC', '#5F7ED9']  # 14가지 색상(청색계열)
+        random.shuffle(time_color_list)
+            
+        try:
+            com_num = combi.curselection()[0]
+            com_num_list.append(com_num)
+            
+            for lectures in range(len(test_lists[com_num])):  # 과목 수
+                for lecture_day in range(len(test_lists[com_num][lectures].day)):# 과목 쪼개진 요일
+                    for classtime in range(len((test_lists[com_num][lectures].day)[lecture_day]) - 1):# 차시
+                        c_time = (test_lists[com_num][lectures].day)[lecture_day][1:]  # 차시 리스트
+                        c_time_row = c_time[classtime]
+                        num_label = Label(tab3_frame3, text=test_lists[com_num][lectures].name, width=10, height=3, bg=time_color_list[lectures], bd=1, fg='white', highlightbackground='darkgrey', wraplength = 60)
+                        num_label.grid(row=c_time_row + 1, column=(test_lists[com_num][lectures].day)[lecture_day][0] + 1)
+                        
+        except:
+            return
+    
+    def see_combi():  # 이전 시간표 삭제 및 선택된 시간표 표시
+        global tab3_frame1, tab3_frame3, test_lists
+        
+        if len(com_num_list) == 0:
+            tab3_frame1.destroy()
+        else:
+            tab3_frame3.destroy()
+        see_combi2()
+
+    Button(tab3_frame2, text="See", width=10, bg="skyblue", command=see_combi).grid(row=7, column=7)
+    Label(tab3_frame2, text = "\n스크린샷은 1920x1080 해상도에\n최적화되어 있습니다.").grid(row=8, column=7)
+
+    # 조합 콤보박스 위에 뭔지 설명하는 말
+    combo_label = Label(tab3_frame2, text="당신이 원하는 조합을 골라보세요!!\n    ↓    ")
+    combo_label.grid(row=3, column=7)
+
+    Button(tab3_frame2, text="Screenshot", width=10, bg="skyblue", command=shot).grid(row=9, column=7)
+
+def is_possible_combination(time_table):
+    check = [[0] * 13 for _ in range(6)]
+    for lecture_obj in time_table:
+        if lecture_obj.day == "null":
+            continue
+        for detail_day in lecture_obj.day:
+            for specific_time in detail_day[1:]:
+                check[detail_day[0]][specific_time - 1] += 1
+
+    for d in check:
+        for c in d:
+            if c >= 2:
+                return False
+
+    return True
 
 def entry_delete(event):
-    search_by_name_or_prof.delete(0,'end')
-
+    search_by_name_or_prof.delete(0, 'end')
 
 def OUT1():
     try:
@@ -301,7 +327,6 @@ def OUT1():
         selected_groups[0].pop(first_idx)
     except:
         pass
-    in_out_test()
 
 def OUT2():
     try:
@@ -310,7 +335,6 @@ def OUT2():
         selected_groups[1].pop(second_idx)
     except:
         pass
-    in_out_test()
 
 def OUT3():
     try:
@@ -319,7 +343,6 @@ def OUT3():
         selected_groups[2].pop(third_idx)
     except:
         pass
-    in_out_test()
 
 def OUT4():
     try:
@@ -328,7 +351,6 @@ def OUT4():
         selected_groups[3].pop(fourth_idx)
     except:
         pass
-    in_out_test()
 
 def OUT5():
     try:
@@ -337,7 +359,6 @@ def OUT5():
         selected_groups[4].pop(fifth_idx)
     except:
         pass
-    in_out_test()
 
 def OUT6():
     try:
@@ -346,7 +367,6 @@ def OUT6():
         selected_groups[5].pop(sixth_idx)
     except:
         pass
-    in_out_test()
 
 def OUT7():
     try:
@@ -355,7 +375,6 @@ def OUT7():
         selected_groups[6].pop(seventh_idx)
     except:
         pass
-    in_out_test()
 
 def OUT8():
     try:
@@ -364,7 +383,6 @@ def OUT8():
         selected_groups[7].pop(eighth_idx)
     except:
         pass
-    in_out_test()
 
 def OUT9():
     try:
@@ -373,7 +391,6 @@ def OUT9():
         selected_groups[8].pop(nineth_idx)
     except:
         pass
-    in_out_test()
 
 def OUT10():
     try:
@@ -382,7 +399,6 @@ def OUT10():
         selected_groups[9].pop(tenth_idx)
     except:
         pass
-    in_out_test()
 
 
 ################################################################
@@ -390,57 +406,54 @@ def OUT10():
 ################################################################
 
 
-
-
-
 #####################################
 ########   tab 1 (과목선택)   ########
 #####################################
-Label(tab1, text="과목검색", font=("", 13), width=14, bg="SteelBlue1", fg = "white").grid(row=0, column=0)
-Label(tab1, text="그룹선택", font=("", 13), width=10, bg = "SteelBlue2", fg = "white").grid(row=0, column=1)
-Label(tab1, text="강의목록", font=("", 13), width=56, bg = "SteelBlue3", fg = "white").grid(row=0, column=2)
+Label(tab1, text="과목검색", font=("", 13), width=21, bg="SteelBlue1", fg="white").grid(row=0, column=0)
+Label(tab1, text="그룹선택", font=("", 13), width=10, bg="SteelBlue2", fg="white").grid(row=0, column=1)
+Label(tab1, text="강의목록", font=("", 13), width=56, bg="SteelBlue3", fg="white").grid(row=0, column=2)
 
-search_by_name_or_prof = Entry(tab1, width=18, highlightbackground='white', highlightcolor='sky blue')
+search_by_name_or_prof = Entry(tab1, width=27, highlightbackground='white', highlightcolor='sky blue')
 search_by_name_or_prof.grid(row=1, column=0)
 search_by_name_or_prof.insert(0, '강의명 또는 교수명을 입력하세요')
 search_by_name_or_prof.bind('<Button-1>', entry_delete)
 
-Label(tab1, text="역량교양", width=18, bg="RoyalBlue", fg = "white").grid(row=2, column=0)
-cb1 = ttk.Combobox(tab1, width=15, height=10, values=역교, state="readonly")
+Label(tab1, text="역량교양", width=27, bg="RoyalBlue", fg="white").grid(row=2, column=0)
+cb1 = ttk.Combobox(tab1, width=24, height=10, values=역교, state="readonly")
 cb1.grid(row=3, column=0)
 cb1.set("None")
 
-Label(tab1, text="통합교양", width=18, bg="RoyalBlue", fg = "white").grid(row=4, column=0)
-cb2 = ttk.Combobox(tab1, width=15, height=10, values=통교, state="readonly")
+Label(tab1, text="통합교양", width=27, bg="RoyalBlue", fg="white").grid(row=4, column=0)
+cb2 = ttk.Combobox(tab1, width=24, height=10, values=통교, state="readonly")
 cb2.grid(row=5, column=0)
 cb2.set("None")
 
-Label(tab1, text="개척교양", width=18, bg="RoyalBlue", fg = "white").grid(row=6, column=0)
-cb3 = ttk.Combobox(tab1, width=15, height=10, values=개교, state="readonly")
+Label(tab1, text="개척교양", width=27, bg="RoyalBlue", fg="white").grid(row=6, column=0)
+cb3 = ttk.Combobox(tab1, width=24, height=10, values=개교, state="readonly")
 cb3.grid(row=7, column=0)
 cb3.set("None")
 
-Label(tab1, text="기초과정", width=18, bg="RoyalBlue", fg = "white").grid(row=8, column=0)
-cb4 = ttk.Combobox(tab1, width=15, height=10, values=기초, state="readonly")
+Label(tab1, text="기초과정", width=27, bg="RoyalBlue", fg="white").grid(row=8, column=0)
+cb4 = ttk.Combobox(tab1, width=24, height=10, values=기초, state="readonly")
 cb4.grid(row=9, column=0)
 cb4.set("None")
 
-Label(tab1, text="교직", width=18, bg="RoyalBlue", fg = "white").grid(row=10, column=0)
-cb5 = ttk.Combobox(tab1, width=15, height=10, values=교직, state="readonly")
+Label(tab1, text="교직", width=27, bg="RoyalBlue", fg="white").grid(row=10, column=0)
+cb5 = ttk.Combobox(tab1, width=24, height=10, values=교직, state="readonly")
 cb5.grid(row=11, column=0)
 cb5.set("None")
 
-Label(tab1, text="일반선택", width=18, bg="RoyalBlue", fg = "white").grid(row=12, column=0)
-cb6 = ttk.Combobox(tab1, width=15, height=10, values=일반, state="readonly")
+Label(tab1, text="일반선택", width=27, bg="RoyalBlue", fg="white").grid(row=12, column=0)
+cb6 = ttk.Combobox(tab1, width=24, height=10, values=일반, state="readonly")
 cb6.grid(row=13, column=0)
 cb6.set("None")
 
-Label(tab1, text="CS전공", width=18, bg="RoyalBlue", fg = "white").grid(row=14, column=0)
-cb7 = ttk.Combobox(tab1, width=15, height=10, values=전공, state="readonly")
+Label(tab1, text="CS전공", width=27, bg="RoyalBlue", fg="white").grid(row=14, column=0)
+cb7 = ttk.Combobox(tab1, width=24, height=10, values=전공, state="readonly")
 cb7.grid(row=15, column=0)
 cb7.set("None")
 
-Button(tab1, text="검색", width=15, bg='skyblue', command=search_subjects).grid(row=16, column=0)
+Button(tab1, text="검색", width=10, bg='skyblue', command=search_subjects).grid(row=16, column=0)
 
 
 groups_frame = ttk.Frame(tab1)
@@ -461,8 +474,6 @@ Radiobutton(groups_frame, text="Group10", value=9, variable=variety1).pack()
 Button(tab1, text="추가", width=8, bg='sky blue', command=In_Lecture).grid(row=16, column=2)
 
 
-
-
 #####################################
 ########   tab 2 (그룹보기)   ########
 #####################################
@@ -470,7 +481,7 @@ group_list = ["Group1", "Group2", "Group3", "Group4", "Group5", "Group6", "Group
 
 
 # 1
-Label(tab2, text=group_list[0], width=35, bg="RoyalBlue", fg = "white").grid(row=0, column=0)
+Label(tab2, text=group_list[0], width=37, bg="RoyalBlue", fg="white").grid(row=0, column=0)
 win1 = ttk.Frame(tab2)
 win1.grid(row=1, column=0, rowspan=1)
 
@@ -482,7 +493,7 @@ scrollbar1.pack(side="right", fill="y")
 first_list.config(yscrollcommand=scrollbar1.set)
 
 # 2
-Label(tab2, text=group_list[1], width=35, bg="RoyalBlue", fg = "white").grid(row=0, column=1)
+Label(tab2, text=group_list[1], width=37, bg="RoyalBlue", fg="white").grid(row=0, column=1)
 win2 = ttk.Frame(tab2)
 win2.grid(row=1, column=1, rowspan=1)
 
@@ -495,7 +506,7 @@ second_list.config(yscrollcommand=scrollbar2.set)
 
 
 # 3
-Label(tab2, text=group_list[2], width=35, bg="RoyalBlue", fg = "white").grid(row=2, column=0)
+Label(tab2, text=group_list[2], width=37, bg="RoyalBlue", fg="white").grid(row=2, column=0)
 win3 = ttk.Frame(tab2)
 win3.grid(row=3, column=0, rowspan=1)
 
@@ -507,7 +518,7 @@ scrollbar3.pack(side="right", fill="y")
 third_list.config(yscrollcommand=scrollbar3.set)
 
 # 4
-Label(tab2, text=group_list[3], width=35, bg="RoyalBlue", fg = "white").grid(row=2, column=1)
+Label(tab2, text=group_list[3], width=37, bg="RoyalBlue", fg="white").grid(row=2, column=1)
 win4 = ttk.Frame(tab2)
 win4.grid(row=3, column=1, rowspan=1)
 
@@ -519,7 +530,7 @@ scrollbar4.pack(side="right", fill="y")
 fourth_list.config(yscrollcommand=scrollbar4.set)
 
 # 5
-Label(tab2, text=group_list[4], width=35, bg="RoyalBlue", fg = "white").grid(row=4, column=0)
+Label(tab2, text=group_list[4], width=37, bg="RoyalBlue", fg="white").grid(row=4, column=0)
 win5 = ttk.Frame(tab2)
 win5.grid(row=5, column=0, rowspan=1)
 
@@ -531,7 +542,7 @@ scrollbar5.pack(side="right", fill="y")
 fifth_list.config(yscrollcommand=scrollbar5.set)
 
 # 6
-Label(tab2, text=group_list[5], width=35, bg="RoyalBlue", fg = "white").grid(row=4, column=1)
+Label(tab2, text=group_list[5], width=37, bg="RoyalBlue", fg="white").grid(row=4, column=1)
 win6 = ttk.Frame(tab2)
 win6.grid(row=5, column=1, rowspan=1)
 
@@ -543,7 +554,7 @@ scrollbar6.pack(side="right", fill="y")
 sixth_list.config(yscrollcommand=scrollbar6.set)
 
 # 7
-Label(tab2, text=group_list[6], width=35, bg="RoyalBlue", fg = "white").grid(row=6, column=0)
+Label(tab2, text=group_list[6], width=37, bg="RoyalBlue", fg="white").grid(row=6, column=0)
 win7 = ttk.Frame(tab2)
 win7.grid(row=7, column=0, rowspan=1)
 
@@ -555,7 +566,7 @@ scrollbar7.pack(side="right", fill="y")
 seventh_list.config(yscrollcommand=scrollbar7.set)
 
 # 8
-Label(tab2, text=group_list[7], width=35, bg="RoyalBlue", fg = "white").grid(row=6, column=1)
+Label(tab2, text=group_list[7], width=37, bg="RoyalBlue", fg="white").grid(row=6, column=1)
 win8 = ttk.Frame(tab2)
 win8.grid(row=7, column=1, rowspan=1)
 
@@ -567,7 +578,7 @@ scrollbar8.pack(side="right", fill="y")
 eighth_list.config(yscrollcommand=scrollbar8.set)
 
 # 9
-Label(tab2, text=group_list[8], width=35, bg="RoyalBlue", fg = "white").grid(row=8, column=0)
+Label(tab2, text=group_list[8], width=37, bg="RoyalBlue", fg="white").grid(row=8, column=0)
 win9 = ttk.Frame(tab2)
 win9.grid(row=9, column=0, rowspan=1)
 
@@ -579,7 +590,7 @@ scrollbar9.pack(side="right", fill="y")
 nineth_list.config(yscrollcommand=scrollbar3.set)
 
 # 10
-Label(tab2, text=group_list[9], width=35, bg="RoyalBlue", fg = "white").grid(row=8, column=1)
+Label(tab2, text=group_list[9], width=37, bg="RoyalBlue", fg="white").grid(row=8, column=1)
 win10 = ttk.Frame(tab2)
 win10.grid(row=9, column=1, rowspan=1)
 
@@ -605,68 +616,32 @@ Button(tab2, text="Merge", width=10, bg='skyblue1', command=combinating).grid(ro
 
 
 tab2_list_boxes = [
-    first_list, second_list, third_list, fourth_list,
-    fifth_list, sixth_list, seventh_list, eighth_list,
-    nineth_list, tenth_list
+    first_list, second_list, third_list, fourth_list, fifth_list, sixth_list, seventh_list, eighth_list, nineth_list, tenth_list
 ]
 
 
-
-
 #####################################
-########   tab 3 (결과보기)   ########
+#######   tab 3-1 (결과보기)   #######
 #####################################
-
-day_name = ["", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"]
-time_list = ["9", "10", "11", "12", "1", "2", "3", "4", "5", "6", "7", "8", "9"]
-
-
-# test 조합 -> 과목 구분 / 과목명 은 후에 공지되는대로 수정
-am = ["", "테스트과목1", "", "", "", "", "", "", [[0, 2, 3], [2, 1]], "", "", ""]
-bm = ["", "테스트과목2", "", "", "", "", "", "", [[1, 5, 6], [3, 4, 7]], "", "", ""]
-cm = ["", "테스트과목3", "", "", "", "", "", "", [[0, 7, 8, 9], [2, 2]], "", "", ""]
-dm = ["", "테스트과목4", "", "", "", "", "", "", [[4, 9]], "", "", ""]
-em = ["", "테스트과목5", "", "", "", "", "", "", [[4, 1, 2], [5, 1], [0, 4]], "", "", ""]
-fm = ["", "테스트과목6", "", "", "", "", "", "", [[2, 6, 7, 8], [3, 1], [4, 5, 6, 7], [5, 4, 5]], "", "", ""]
-test_lists = [[Lecture(am), Lecture(bm), Lecture(cm)], [Lecture(dm), Lecture(em), Lecture(fm)]]
-
-com_num_list = []    # 이전 시간표frame 삭제 시 필요함
-
-tab3_frame1 = Frame(tab3, relief='flat') 
+tab3_frame1 = ttk.Frame(tab3, relief='flat')
 tab3_frame1.grid(row=0, column=0)
 
-tab3_frame2 = Frame(tab3, relief='flat') 
+tab3_frame2 = ttk.Frame(tab3, relief='flat')
 tab3_frame2.grid(row=0, column=1)
 
-for i in range(0, 7):
-    Label(tab3_frame1, text=day_name[i], width=10, bg="RoyalBlue", fg = "white").grid(row=1, column=i)
+for i in range(0, 7):  # 시간표 틀
+    Label(tab3_frame1, text=day_name[i], width=10, bg="RoyalBlue", fg="white").grid(row=1, column=i)
     for k in range(len(time_list)):
         if i == 0:
-            Label(tab3_frame1, text=time_list[k], width=10, height=3, bg="white", anchor="n").grid(
-                row=k+2, column=i)
+            Label(tab3_frame1, text=time_list[k], width=10, height=3, bg="white", anchor="n").grid( row=k+2, column=i)
         else:
             Label(tab3_frame1, width=10, height=3, bg="white", relief='solid', bd=0.1).grid(row=k+2, column=i)
 
 
-combi = ttk.Combobox(tab3_frame2, width=10, height=10, values=test_lists, state='readonly')
-combi.grid(row=4, column=7)
-combi.set("None")
-
-
-Button(tab3_frame2, text="See", width=10, bg="skyblue", command=see_combi).grid(row=8, column=7)
-
-
-# 조합 콤보박스 위에 뭔지 설명하는 말
-combo_label = Label(tab3_frame2, text="당신이 원하는 조합을 골라보세요!!\n    ↓    ")
-combo_label.grid(row=3, column=7)
-
-Button(tab3_frame2, text="Screenshot", width=10, bg="skyblue", command=shot).grid(row=7, column=7)
-
-
-# 프로그램 종료
+# 기타 나머지
 Button(tab1, text="EXIT", width=10, bg="slateblue2", fg="white", command=exit_window).grid(row=17, column=0)
-Button(tab2, text="EXIT", width=10, bg="slateblue2", fg="white", command=exit_window).grid(row=11, column=2)
+Label(tab2).grid(row=11, column=2) # 공백
+Button(tab2, text="EXIT", width=10, bg="slateblue2", fg="white", command=exit_window).grid(row=12, column=2)
 Button(tab3, text="EXIT", width=10, bg="slateblue2", fg="white", command=exit_window).grid(row=2, column=0, sticky='w')
-
 
 window.mainloop()

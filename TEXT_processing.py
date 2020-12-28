@@ -67,7 +67,7 @@ def test(obj_list):
         # print("%-5s : %s" % ("이론      ", obj.theory))
         # print("%-5s : %s" % ("실습      ", obj.practice))
         print("%-5s : %s" % ("교수명    ", obj.prof))  
-        print("%-5s : %s" % ("요일및교시", obj.day))
+        print("%-5s : %s" % ("요일및교시", obj.day_str))
         # print("%-5s : %s" % ("강의실    ", obj.classroom_num))
         # print("%-5s : %s" % ("기타      ", obj.etc))
         print()
