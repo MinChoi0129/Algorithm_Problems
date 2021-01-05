@@ -12,4 +12,3 @@ hashed_int = 0
 for i in range(len(old_str)):
     hashed_int += change[old_str[i]] * (31 ** i)
 print(hashed_int % 1234567891)
-    

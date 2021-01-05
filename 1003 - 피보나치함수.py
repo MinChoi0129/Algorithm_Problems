@@ -1,3 +1,7 @@
+case = []
+print_0_cnt = [1, 0]
+print_1_cnt = [0, 1]
+
 def fill_cnts(max_num):
     global print_0_cnt, print_1_cnt
     if max_num <= 1:
@@ -8,11 +12,6 @@ def fill_cnts(max_num):
 
 
 T = int(input())
-
-case = []
-print_0_cnt = [1, 0]
-print_1_cnt = [0, 1]
-
 for _ in range(T):
     case.append(int(input()))
 
