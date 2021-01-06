@@ -1,10 +1,3 @@
-'''
-현재 작업중
-
-
-※ 자기가 수정한 부분만 지우고 복붙해주세요
-'''
-
 import pygame, time, sys, os
 from datetime import datetime
 
@@ -12,7 +5,7 @@ pygame.init()
 window = pygame.display.set_mode((800, 600))  # window == 화면 이름
 pygame.display.set_caption("오목게임")
 
-# 이미지 로딩
+# 이미지, 사운드 로딩
 main_bg_img = pygame.image.load("./images/background/5mok.png")
 back_img = pygame.image.load("./images/background/HTP_bg.png")
 back_play_img = pygame.image.load("./images/background/play_back.png")
@@ -34,6 +27,26 @@ s_none_img = pygame.image.load("./images/play/s_blank.png")
 giveup_img = pygame.image.load("./images/background/giveup.png")
 next_btn_img = pygame.image.load("./images/play/nextBtn.png")
 gamestart_btn_img = pygame.image.load("./images/play/startBtn.png")
+gameover_img = pygame.image.load("./images/state/gameover.png")
+again_btn_img = pygame.image.load("./images/state/gameover_again.png")
+gomain_btn_img = pygame.image.load("./images/state/gameover_main.png")
+give_up_img = pygame.image.load("./images/play/give_up.png")
+yes_img = pygame.image.load("./images/play/yes.png")
+no_img = pygame.image.load("./images/play/no.png")
+sounds = [
+    # 버튼 클릭시 소리가 나는 것이라면, 버튼 오브젝트 만들 때 인자(효과음)에 경로와 반복횟수를 튜플로 넣어주면 됨
+    # ex. 버튼(window, back_btn_img, (700, 30), main_menu, 효과음 = (sounds[0], 0))
+    # 이외엔 함수 안에서 직접 재생
+    "./sounds/water_drop.wav", # 0
+    "./sounds/gamestart_sound.wav", # 1
+    "./sounds/how_to_play_sound.wav", # 2
+    "./sounds/giveup_sound.wav", # 3
+    "./sounds/black_win_sound.wav", # 4
+    "./sounds/white_win_sound.wav", # 5
+    "./sounds/put_black_sound.wav", # 6
+    "./sounds/put_white_sound.wav", # 7
+    "./sounds/choose_daeguk_sound.wav" # 8
+]
 
 # 전역변수
 count = 0  # 수
@@ -42,7 +55,7 @@ turn = "BLACK"  # 차례(시작 : 흑)
 board = [['·' for i in range(19)] for j in range(19)]
 evaluationResult = 0 # 0 : 게임진행, 1 : 흑 승리, 2 : 백 승리
 clear_cmd = "cls" if os.name == "nt" else "clear"
-
+ 
 ''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
 
 def evaluate(placingAxis):
@@ -123,6 +136,7 @@ def evaluate(placingAxis):
         eachLine += board[y][x]
         x += 1
         y += 1
+        
 
     if eachLine.find("●●●●●") != -1:
         evaluationResult = 1
@@ -156,8 +170,7 @@ def evaluate(placingAxis):
 
     # 여기까지 왔다 == 게임 계속 진행
     evaluationResult = 0
-    
-    
+      
 def game_over(result):  # GUI화 필요
     global username1, username2
     # result가 1이면 흑 승 / 2이면 백 승
@@ -166,6 +179,11 @@ def game_over(result):  # GUI화 필요
     print("게임오버, 게임기록중...")
     record_daeguk()
     print("txt파일에 기록완료")
+
+    winner_sound = sounds[4] if result == 1 else sounds[5]
+    pygame.mixer.music.load(winner_sound)
+    pygame.mixer.music.play(0)
+
     승자돌그림 = s_black_img if result == 1 else s_white_img
     while True:
         for event in pygame.event.get():
@@ -198,16 +216,12 @@ def game_over(result):  # GUI화 필요
         window.blit(winner_img, (646, 200))
         window.blit(승자돌그림, (695, 270))
         버튼(window, back2_btn_img, (700, 30), main_menu)
+        window.blit(gameover_img, (200, 165))
+        버튼(window, again_btn_img, (300,290), fir_username)
+        버튼(window, gomain_btn_img, (300,350), main_menu)
         pygame.display.update()
 
-
 def game_start():
-    global count, username1, username2, turn, board, evaluationResult
-    count = 0
-    turn = "BLACK"
-    board = [['·' for i in range(19)] for j in range(19)]
-    evaluationResult = 0
-
     while True:
 
         for event in pygame.event.get():
@@ -219,14 +233,12 @@ def game_start():
         window.blit(table_img, (22, 22))
         window.blit(stateBox_img, (612, 0))
         window.blit(turn_img, (646, 200))
-        버튼(window, giveup_img, (700, 30), give_up)
+        버튼(window, giveup_img, (700, 30), give_up_btn, 효과음 = (sounds[3], 0))
 
         if turn == "BLACK":
             window.blit(s_black_img, (695, 270))
-            print("흑의 차례입니다.")
         else:
             window.blit(s_white_img, (695, 270))
-            print("백의 차례입니다.")
 
         for x in range(19):
             for y in range(19):
@@ -256,9 +268,8 @@ def game_start():
                           69) if y % 2 == 0 else ((y // 2) * 26 + (y // 2) * 25 + 69)
                     no_stone_center = s_none_img.get_rect()
                     no_stone_center.center = (y1, x1 + 25)
-                    버튼(window, s_none_img, no_stone_center, evaluate, [x, y - 1])
-
-        test_func()
+                    black_or_white = 6 if turn == "BLACK" else 7
+                    버튼(window, s_none_img, no_stone_center, evaluate, [x, y - 1], 효과음 = (sounds[0], 0))
 
         if evaluationResult == 1 or evaluationResult == 2:  # 승자가 가려졌을 경우
             game_over(evaluationResult)
@@ -267,32 +278,23 @@ def game_start():
 ''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
 
 class 버튼:  # 완성
-    def __init__(self, 윈도우, 버튼이미지, pygame좌표=(0, 0), 실행할함수=None, 매개변수=None):
+    def __init__(self, 윈도우, 버튼이미지, pygame좌표=(0, 0), 실행할함수=None, 매개변수=None, 효과음=(None, 0)):
         mouse = pygame.mouse.get_pos()
         click = pygame.mouse.get_pressed()
         if pygame좌표[0] + 버튼이미지.get_width() > mouse[0] > pygame좌표[0] and pygame좌표[1] + 버튼이미지.get_height() > mouse[1] > pygame좌표[1]:
             윈도우.blit(버튼이미지, (pygame좌표[0], pygame좌표[1]))
             if click[0]:
+                if 효과음[0] != None:
+                    pygame.mixer.music.load(효과음[0])
+                    pygame.mixer.music.play(효과음[1])
                 if 실행할함수 != None:
-                    time.sleep(0.3)
+                    time.sleep(0.5)
                     if 매개변수 != None:
-                      실행할함수(매개변수)
+                        실행할함수(매개변수)
                     else:
                         실행할함수()
         else:
             윈도우.blit(버튼이미지, (pygame좌표[0], pygame좌표[1]))
-
-def test_func():
-    global board, username1, username2, evaluationResult, count
-    os.system(clear_cmd)
-    for line in board:
-        for stone in line:
-            print(stone, end=" ")
-        print()
-
-    print("users :", username1, "/", username2)
-    print("evalresult :", evaluationResult)
-    print("count :", count)
 
 def main_menu():  # 완성
     run = True
@@ -303,10 +305,21 @@ def main_menu():  # 완성
                 sys.exit()
 
         window.blit(main_bg_img, (0, 0))
-        버튼(window, start_btn_img, (410, 480), fir_username)
-        버튼(window, rule_btn_img, (515, 410), how_to_play)
-        버튼(window, record_btn_img, (615, 430), all_daeguks)
-        버튼(window, exit_btn_img, (510, 500), quitcmd)
+        버튼(window, start_btn_img, (410, 480), fir_username, 효과음 = (sounds[0], 0))
+        버튼(window, rule_btn_img, (515, 410), how_to_play, 효과음 = (sounds[0], 0))
+        버튼(window, record_btn_img, (615, 430), all_daeguks, 효과음 = (sounds[0], 0))
+        버튼(window, exit_btn_img, (510, 500), quitcmd, 효과음 = (sounds[0], 0))
+        pygame.display.update()
+
+def give_up_btn():
+    run = True
+    while run:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                quitcmd()
+        window.blit(give_up_img, (50, 200))
+        버튼(window, yes_img, (190,285), give_up, 효과음 = (sounds[0], 0))
+        버튼(window, no_img, (390, 285), game_start, 효과음 = (sounds[0], 0))
         pygame.display.update()
 
 def give_up():
@@ -319,6 +332,8 @@ def give_up():
         game_over(2)
 
 def how_to_play():  # 완성
+    pygame.mixer.music.load(sounds[2])
+    pygame.mixer.music.play(0)
     run = True
     while run:
         for event in pygame.event.get():
@@ -347,11 +362,12 @@ def how_to_play():  # 완성
             window.blit(text, center)
             axis += 80
 
-        버튼(window, back_btn_img, (700, 30), main_menu)
+        버튼(window, back_btn_img, (700, 30), main_menu, 효과음 = (sounds[0], 0))
         pygame.display.update()
 
 def all_daeguks():  # 완성
-
+    pygame.mixer.music.load(sounds[8])
+    pygame.mixer.music.play(0)
     file_len = 0
     font = pygame.font.Font('paybooc Bold.ttf', 20)
 
@@ -394,7 +410,7 @@ def all_daeguks():  # 완성
 
         if num_of_daeguks // 21 > 7:
             for i in range(7):
-                버튼(window, see_btn_img, (600, 100 + 60 * i), show_daeguk, i + 1)
+                버튼(window, see_btn_img, (600, 100 + 60 * i), show_daeguk, i + 1, 효과음 = (sounds[0], 0))
                 버튼(window, output_img, (150, 100 + 60 * i))
                 title = font.render(new_contents[output_index][3] + ' ' + new_contents[output_index]
                                     [0] + ' VS ' + new_contents[output_index][1], True, (255, 212, 0))
@@ -405,7 +421,7 @@ def all_daeguks():  # 완성
                 output_place += 60
         else:
             for i in range(num_of_daeguks // 21):
-                버튼(window, see_btn_img, (600, 100 + 60 * i), show_daeguk, i + 1)
+                버튼(window, see_btn_img, (600, 100 + 60 * i), show_daeguk, i + 1, 효과음 = (sounds[0], 0))
                 버튼(window, output_img, (150, 100 + 60 * i))
                 title = font.render(new_contents[output_index][3] + ' ' + new_contents[output_index]
                                     [0] + ' VS ' + new_contents[output_index][1], True, (255, 212, 0))
@@ -415,7 +431,7 @@ def all_daeguks():  # 완성
                 output_index += 1
                 output_place += 60
 
-        버튼(window, back_btn_img, (700, 30), main_menu)
+        버튼(window, back_btn_img, (700, 30), main_menu, 효과음 = (sounds[0], 0))
         pygame.display.update()
 
 def quitcmd():  # 완성
@@ -442,13 +458,6 @@ def record_daeguk():  # 완성
         str_to_write = ""
     f.write('\n')
     f.close()
-      
-    # for x in range(19):
-    #     for y in range(18):
-    #         f.write("%c " % str(board[x][y]))
-    #     f.write("%c\n" % str(board[x][18]))
-    # f.write("\n")
-    # f.close()
 
 def show_daeguk(getin):  # 완성
     num_of_daeguks = 0
@@ -522,12 +531,17 @@ def show_daeguk(getin):  # 완성
                     white_center = s_white_img.get_rect()
                     white_center.center = (y1, x1)
                     window.blit(s_white_img, white_center)
-        버튼(window, back2_btn_img, (700, 30), all_daeguks)
+        버튼(window, back2_btn_img, (700, 30), all_daeguks, 효과음 = (sounds[0], 0))
         pygame.display.update()
 
 def fir_username():
-    global username1, username2
-    username1, username2 = "", ""  # 두번째 판 부터 영향받는 코드
+    global count, username1, username2, turn, board, evaluationResult
+    count = 0  # 수
+    username1, username2 = "", ""  # 유저1, 유저2
+    turn = "BLACK"  # 차례(시작 : 흑)
+    board = [['·' for i in range(19)] for j in range(19)]
+    evaluationResult = 0 # 0 : 게임진행, 1 : 흑 승리, 2 : 백 승리
+
     font = pygame.font.Font('paybooc Bold.ttf', 25)
 
     nameTxt = font.render("이름을 7자 이내로 설정하여 주십시오.", True, (255, 212, 0))
@@ -539,6 +553,10 @@ def fir_username():
     rect1 = name_input.get_rect()
     rect1.topleft = (250, 330)
     cursor = pygame.Rect(rect1.topright, (3, rect1.height))
+
+    def next():
+        if len(username1)>0:
+            sec_username()
 
     run = True
     while run:
@@ -561,10 +579,9 @@ def fir_username():
 
         if time.time() % 1 > 0.5:  # 커서 깜빡임
             pygame.draw.rect(window, 'white', cursor)
-        버튼(window, next_btn_img, (570, 330), sec_username)  # 다음 버튼
-        버튼(window, back_btn_img, (700, 30), main_menu)
+        버튼(window, next_btn_img, (570, 330), next, 효과음 = (sounds[0], 0))  # 다음 버튼
+        버튼(window, back_btn_img, (700, 30), main_menu, 효과음 = (sounds[0], 0))
         username1 = fir_username[10:]
-        test_func()
         pygame.display.update()
 
 def sec_username():
@@ -580,6 +597,10 @@ def sec_username():
     rect1 = name_input.get_rect()
     rect1.topleft = (250, 330)
     cursor = pygame.Rect(rect1.topright, (3, rect1.height))
+
+    def next():
+        if len(username2)>0:
+            black_white()
 
     run = True
     while run:
@@ -602,30 +623,30 @@ def sec_username():
 
         if time.time() % 1 > 0.5:  # 커서 깜빡임
             pygame.draw.rect(window, 'white', cursor)
-        버튼(window, next_btn_img, (570, 330), black_white)  # 다음 버튼
-        버튼(window, back_btn_img, (700, 30), fir_username)
+        버튼(window, next_btn_img, (570, 330), next, 효과음 = (sounds[0], 0))  # 다음 버튼
+        버튼(window, back_btn_img, (700, 30), fir_username, 효과음 = (sounds[0], 0))
         username2 = sec_username[10:]
-        test_func()
         pygame.display.update()
 
 def black_white():
-  global username1, username2
+    global username1, username2
 
-  font = pygame.font.Font('paybooc Bold.ttf', 25)
-  Txt = font.render(username1 + "이(가) 흑입니다.", True, (255, 212, 0))
-  Txt_center = Txt.get_rect()
-  Txt_center.center = (400, 260)
+    font = pygame.font.Font('paybooc Bold.ttf', 25)
+    Txt = font.render(username1 + " 이(가) 흑입니다.", True, (255, 212, 0))
+    Txt_center = Txt.get_rect()
+    Txt_center.center = (400, 260)
 
 
-  run = True
-  while run:
-      for event in pygame.event.get():
-          if event.type == pygame.QUIT:
-              quitcmd()
-      window.blit(back_play_img, (0, 0))
+    run = True
+    while run:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                quitcmd()
+        window.blit(back_play_img, (0, 0))
 
-      버튼(window, gamestart_btn_img, (329, 330), game_start)
-      window.blit(Txt, Txt_center)
-      pygame.display.update()
+        버튼(window, gamestart_btn_img, (329, 330), game_start, 효과음 = (sounds[1], 0))
+        window.blit(Txt, Txt_center)
+        pygame.display.update()
 
+pygame.mixer.Channel(0).play(pygame.mixer.Sound('./sounds/bgm.mp3'))
 main_menu()
