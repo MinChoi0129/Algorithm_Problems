@@ -3,49 +3,59 @@ from datetime import datetime
 
 pygame.init()
 window = pygame.display.set_mode((800, 600))  # window == 화면 이름
-pygame.display.set_caption("오목게임")
+pygame.display.set_caption("오목")
+
+def resource_path(relative_path):
+    """ Get absolute path to resource, works for dev and for PyInstaller """
+    try:
+        # PyInstaller creates a temp folder and stores path in _MEIPASS
+        base_path = sys._MEIPASS
+    except Exception:
+        base_path = os.path.abspath(".")
+
+    return os.path.join(base_path, relative_path)
 
 # 이미지, 사운드 로딩
-main_bg_img = pygame.image.load("./images/background/5mok.png")
-back_img = pygame.image.load("./images/background/HTP_bg.png")
-back_play_img = pygame.image.load("./images/background/play_back.png")
-start_btn_img = pygame.image.load("./images/background/start.png")
-rule_btn_img = pygame.image.load("./images/background/rule.png")
-record_btn_img = pygame.image.load("./images/background/record.png")
-exit_btn_img = pygame.image.load("./images/background/exit.png")
-back_btn_img = pygame.image.load("./images/background/back.png")
-back2_btn_img = pygame.image.load("./images/background/back2.png")
-see_btn_img = pygame.image.load("./images/background/see.png")
-table_img = pygame.image.load("./images/play/table.png")
-output_img = pygame.image.load("./images/background/output.png")
-s_black_img = pygame.image.load("./images/play/s_black.png")
-s_white_img = pygame.image.load("./images/play/s_white.png")
-stateBox_img = pygame.image.load("./images/state/stateBox.png")
-winner_img = pygame.image.load("./images/state/winner.png")
-turn_img = pygame.image.load("./images/state/order.png")
-s_none_img = pygame.image.load("./images/play/s_blank.png")
-giveup_img = pygame.image.load("./images/background/giveup.png")
-next_btn_img = pygame.image.load("./images/play/nextBtn.png")
-gamestart_btn_img = pygame.image.load("./images/play/startBtn.png")
-gameover_img = pygame.image.load("./images/state/gameover.png")
-again_btn_img = pygame.image.load("./images/state/gameover_again.png")
-gomain_btn_img = pygame.image.load("./images/state/gameover_main.png")
-give_up_img = pygame.image.load("./images/play/give_up.png")
-yes_img = pygame.image.load("./images/play/yes.png")
-no_img = pygame.image.load("./images/play/no.png")
+loading_img = pygame.image.load(resource_path("images/background/loading.png"))
+main_bg_img = pygame.image.load(resource_path("images/background/5mok.png"))
+back_img = pygame.image.load(resource_path("images/background/HTP_bg.png"))
+back_play_img = pygame.image.load(resource_path("images/background/play_back.png"))
+start_btn_img = pygame.image.load(resource_path("images/background/start.png"))
+rule_btn_img = pygame.image.load(resource_path("images/background/rule.png"))
+record_btn_img = pygame.image.load(resource_path("images/background/record.png"))
+exit_btn_img = pygame.image.load(resource_path("images/background/exit.png"))
+back_btn_img = pygame.image.load(resource_path("images/background/back.png"))
+back2_btn_img = pygame.image.load(resource_path("images/background/back2.png"))
+see_btn_img = pygame.image.load(resource_path("images/background/see.png"))
+table_img = pygame.image.load(resource_path("images/play/table.png"))
+output_img = pygame.image.load(resource_path("images/background/output.png"))
+s_black_img = pygame.image.load(resource_path("images/play/s_black.png"))
+s_white_img = pygame.image.load(resource_path("images/play/s_white.png"))
+stateBox_img = pygame.image.load(resource_path("images/state/stateBox.png"))
+winner_img = pygame.image.load(resource_path("images/state/winner.png"))
+turn_img = pygame.image.load(resource_path("images/state/order.png"))
+s_none_img = pygame.image.load(resource_path("images/play/s_blank.png"))
+giveup_img = pygame.image.load(resource_path("images/background/giveup.png"))
+next_btn_img = pygame.image.load(resource_path("images/play/nextBtn.png"))
+gamestart_btn_img = pygame.image.load(resource_path("images/play/startBtn.png"))
+gameover_img = pygame.image.load(resource_path("images/state/gameover.png"))
+again_btn_img = pygame.image.load(resource_path("images/state/gameover_again.png"))
+gomain_btn_img = pygame.image.load(resource_path("images/state/gameover_main.png"))
+give_up_img = pygame.image.load(resource_path("images/play/give_up.png"))
+yes_img = pygame.image.load(resource_path("images/play/yes.png"))
+no_img = pygame.image.load(resource_path("images/play/no.png"))
+
 sounds = [
-    # 버튼 클릭시 소리가 나는 것이라면, 버튼 오브젝트 만들 때 인자(효과음)에 경로와 반복횟수를 튜플로 넣어주면 됨
-    # ex. 버튼(window, back_btn_img, (700, 30), main_menu, 효과음 = (sounds[0], 0))
-    # 이외엔 함수 안에서 직접 재생
-    "./sounds/water_drop.wav", # 0
-    "./sounds/gamestart_sound.wav", # 1
-    "./sounds/how_to_play_sound.wav", # 2
-    "./sounds/giveup_sound.wav", # 3
-    "./sounds/black_win_sound.wav", # 4
-    "./sounds/white_win_sound.wav", # 5
-    "./sounds/put_black_sound.wav", # 6
-    "./sounds/put_white_sound.wav", # 7
-    "./sounds/choose_daeguk_sound.wav" # 8
+    resource_path("sounds/water_drop.wav"),
+    resource_path("sounds/gamestart_sound.wav"),
+    resource_path("sounds/how_to_play_sound.wav"),
+    resource_path("sounds/giveup_sound.wav"),
+    resource_path("sounds/black_win_sound.wav"),
+    resource_path("sounds/white_win_sound.wav"),
+    resource_path("sounds/put_black_sound.wav"),
+    resource_path("sounds/put_white_sound.wav"),
+    resource_path("sounds/choose_daeguk_sound.wav"),
+    resource_path("sounds/bgm.ogg")
 ]
 
 # 전역변수
@@ -54,9 +64,25 @@ username1, username2 = "", ""  # 유저1, 유저2
 turn = "BLACK"  # 차례(시작 : 흑)
 board = [['·' for i in range(19)] for j in range(19)]
 evaluationResult = 0 # 0 : 게임진행, 1 : 흑 승리, 2 : 백 승리
-clear_cmd = "cls" if os.name == "nt" else "clear"
- 
-''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+
+class 버튼:  # 완성
+    def __init__(self, 윈도우, 버튼이미지, pygame좌표=(0, 0), 실행할함수=None, 매개변수=None, 효과음=(None, 0)):
+        mouse = pygame.mouse.get_pos()
+        click = pygame.mouse.get_pressed()
+        if pygame좌표[0] + 버튼이미지.get_width() > mouse[0] > pygame좌표[0] and pygame좌표[1] + 버튼이미지.get_height() > mouse[1] > pygame좌표[1]:
+            윈도우.blit(버튼이미지, (pygame좌표[0], pygame좌표[1]))
+            if click[0]:
+                if 효과음[0] != None:
+                    pygame.mixer.music.load(효과음[0])
+                    pygame.mixer.music.play(효과음[1])
+                if 실행할함수 != None:
+                    time.sleep(0.5)
+                    if 매개변수 != None:
+                        실행할함수(매개변수)
+                    else:
+                        실행할함수()
+        else:
+            윈도우.blit(버튼이미지, (pygame좌표[0], pygame좌표[1]))
 
 def evaluate(placingAxis):
     global board, evaluationResult, count, turn
@@ -66,27 +92,12 @@ def evaluate(placingAxis):
     # 내부 변수 x, y는 pygame에서의 그것과 같음
     # 호출 시(placingAxis의 x, y값) game_records에서의 좌표로 호출하면 됨
 
-    if type(placingAxis) is not list:
-        print("__evaluate: 입력값이 유효하지 않음 - 매개 변수는 반드시 list여야 함")
-        raise Exception
-
     try:
         # game_record의 좌표를 pygame의 좌표로 바꾸어서 진행
         x = placingAxis[1]
         y = placingAxis[0]
     except:
-        print("__evaluate: 입력값이 유효하지 않음 - 좌표값은 반드시 숫자여야 함")
         raise Exception
-
-    # 좌표 위치 확인
-    if x not in range(0, 19) or y not in range(0, 19):
-        print("좌표 이탈")
-        return -1
-
-    if board[y][x] != "·":
-        print("이미 돌이 있습니다!")
-        return -1
-    #######################################################################################
 
     if turn == "BLACK":
         board[y][x] = '●'
@@ -174,11 +185,7 @@ def evaluate(placingAxis):
 def game_over(result):  # GUI화 필요
     global username1, username2
     # result가 1이면 흑 승 / 2이면 백 승
-    win = "흑(" + username1 + ")" if result == 1 else "백(" + username2 + ")"
-    print("승자 :", win)
-    print("게임오버, 게임기록중...")
     record_daeguk()
-    print("txt파일에 기록완료")
 
     winner_sound = sounds[4] if result == 1 else sounds[5]
     pygame.mixer.music.load(winner_sound)
@@ -217,8 +224,8 @@ def game_over(result):  # GUI화 필요
         window.blit(승자돌그림, (695, 270))
         버튼(window, back2_btn_img, (700, 30), main_menu)
         window.blit(gameover_img, (200, 165))
-        버튼(window, again_btn_img, (300,290), fir_username)
-        버튼(window, gomain_btn_img, (300,350), main_menu)
+        버튼(window, again_btn_img, (300,290), fir_username, 효과음 = (sounds[0], 0))
+        버튼(window, gomain_btn_img, (300,350), main_menu, 효과음 = (sounds[0], 0))
         pygame.display.update()
 
 def game_start():
@@ -269,32 +276,11 @@ def game_start():
                     no_stone_center = s_none_img.get_rect()
                     no_stone_center.center = (y1, x1 + 25)
                     black_or_white = 6 if turn == "BLACK" else 7
-                    버튼(window, s_none_img, no_stone_center, evaluate, [x, y - 1], 효과음 = (sounds[0], 0))
+                    버튼(window, s_none_img, no_stone_center, evaluate, [x, y - 1], 효과음 = (sounds[black_or_white], 0))
 
         if evaluationResult == 1 or evaluationResult == 2:  # 승자가 가려졌을 경우
             game_over(evaluationResult)
         pygame.display.update()
-
-''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
-
-class 버튼:  # 완성
-    def __init__(self, 윈도우, 버튼이미지, pygame좌표=(0, 0), 실행할함수=None, 매개변수=None, 효과음=(None, 0)):
-        mouse = pygame.mouse.get_pos()
-        click = pygame.mouse.get_pressed()
-        if pygame좌표[0] + 버튼이미지.get_width() > mouse[0] > pygame좌표[0] and pygame좌표[1] + 버튼이미지.get_height() > mouse[1] > pygame좌표[1]:
-            윈도우.blit(버튼이미지, (pygame좌표[0], pygame좌표[1]))
-            if click[0]:
-                if 효과음[0] != None:
-                    pygame.mixer.music.load(효과음[0])
-                    pygame.mixer.music.play(효과음[1])
-                if 실행할함수 != None:
-                    time.sleep(0.5)
-                    if 매개변수 != None:
-                        실행할함수(매개변수)
-                    else:
-                        실행할함수()
-        else:
-            윈도우.blit(버튼이미지, (pygame좌표[0], pygame좌표[1]))
 
 def main_menu():  # 완성
     run = True
@@ -341,7 +327,7 @@ def how_to_play():  # 완성
                 pygame.quit()
                 sys.exit()
         window.blit(back_img, (0, 0))
-        font = pygame.font.Font('paybooc Bold.ttf', 20)
+        font = pygame.font.Font(resource_path('paybooc Bold.ttf'), 20)
         texts = []
         texts.append(font.render("<오목 게임>", True, (255, 212, 0)))
         texts.append(font.render(
@@ -369,14 +355,14 @@ def all_daeguks():  # 완성
     pygame.mixer.music.load(sounds[8])
     pygame.mixer.music.play(0)
     file_len = 0
-    font = pygame.font.Font('paybooc Bold.ttf', 20)
+    font = pygame.font.Font(resource_path('paybooc Bold.ttf'), 20)
 
-    with open("game_records.txt", 'r', encoding='utf-8') as f:
+    with open(resource_path("game_records.txt"), 'r', encoding='utf-8') as f:
         num_of_daeguks = 0
         for i in f:
             num_of_daeguks += 1
 
-    with open("game_records.txt", 'r', encoding='utf-8') as f:
+    with open(resource_path("game_records.txt"), 'r', encoding='utf-8') as f:
         contents = list()
         new_contents = list()
 
@@ -444,7 +430,7 @@ def record_daeguk():  # 완성
     now = datetime.now().strftime('%Y-%m-%d')  # 오늘 날짜
     winner = "WHITE" if turn == "BLACK" else "BLACK"  # 승자
 
-    f = open("game_records.txt", "a+", encoding='utf-8')
+    f = open(resource_path("game_records.txt"), "a+", encoding='utf-8')
     write_data = "%s %s %s %s %d\n" % (
         username1, username2, winner, now, count)  # 유저1 유저2 승자 날짜 n수 기록
     f.write(write_data)
@@ -462,7 +448,7 @@ def record_daeguk():  # 완성
 def show_daeguk(getin):  # 완성
     num_of_daeguks = 0
 
-    with open("game_records.txt", 'r', encoding='utf-8') as f:
+    with open(resource_path("game_records.txt"), 'r', encoding='utf-8') as f:
         contents = f.readlines()
         for i in contents:
             num_of_daeguks += 1
@@ -471,7 +457,7 @@ def show_daeguk(getin):  # 완성
     daeguk_number = num_of_daeguks - (getin - 1)
 
     game_result = []
-    g = open("game_records.txt", 'r', encoding='utf-8')
+    g = open(resource_path("game_records.txt"), 'r', encoding='utf-8')
     start_line = 21 * (daeguk_number - 1)
     for i in range(start_line):  # 줄 건너뛰기
         g.readline()
@@ -482,7 +468,7 @@ def show_daeguk(getin):  # 완성
         game_result.append(list(g.readline().split()))
     g.close()
 
-    big_font = pygame.font.Font('paybooc Bold.ttf', 30)
+    big_font = pygame.font.Font(resource_path('paybooc Bold.ttf'), 30)
     winner_name = game_result[0][0] if game_result[0][2] == "BLACK" else game_result[0][1]
     winner_font = big_font.render(winner_name, True, (0, 0, 0))
     winner_font_center = winner_font.get_rect()
@@ -511,8 +497,6 @@ def show_daeguk(getin):  # 완성
         window.blit(table_img, (22, 22))
         for x in range(1, 20):
             for y in range(19):
-                # print("LEN: ", len(game_result), "[x]: ", len(game_result[x]))
-                # print("x y = ", x, y)
                 if game_result[x][y] == "●":  # 흑
                     y += 1
                     x1 = ((x // 2) * 26 + ((x // 2) - 1) * 25 +
@@ -542,7 +526,7 @@ def fir_username():
     board = [['·' for i in range(19)] for j in range(19)]
     evaluationResult = 0 # 0 : 게임진행, 1 : 흑 승리, 2 : 백 승리
 
-    font = pygame.font.Font('paybooc Bold.ttf', 25)
+    font = pygame.font.Font(resource_path('paybooc Bold.ttf'), 25)
 
     nameTxt = font.render("이름을 7자 이내로 설정하여 주십시오.", True, (255, 212, 0))
     nameTxt_center = nameTxt.get_rect()
@@ -586,7 +570,7 @@ def fir_username():
 
 def sec_username():
     global username2
-    font = pygame.font.Font('paybooc Bold.ttf', 25)
+    font = pygame.font.Font(resource_path('paybooc Bold.ttf'), 25)
 
     nameTxt = font.render("이름을 7자 이내로 설정하여 주십시오.", True, (255, 212, 0))
     nameTxt_center = nameTxt.get_rect()
@@ -631,7 +615,7 @@ def sec_username():
 def black_white():
     global username1, username2
 
-    font = pygame.font.Font('paybooc Bold.ttf', 25)
+    font = pygame.font.Font(resource_path('paybooc Bold.ttf'), 25)
     Txt = font.render(username1 + " 이(가) 흑입니다.", True, (255, 212, 0))
     Txt_center = Txt.get_rect()
     Txt_center.center = (400, 260)
@@ -648,5 +632,7 @@ def black_white():
         window.blit(Txt, Txt_center)
         pygame.display.update()
 
-pygame.mixer.Channel(0).play(pygame.mixer.Sound('./sounds/bgm.mp3'))
+window.blit(loading_img, (0, 0))
+pygame.display.update()
+pygame.mixer.Channel(0).play(pygame.mixer.Sound(sounds[9]))
 main_menu()
