@@ -1,10 +1,19 @@
-from tkinter import Tk, Listbox, Scrollbar, Label, Button, Entry, Radiobutton, IntVar
-from tkinter import ttk, messagebox
-from PIL import ImageGrab
+from tkinter import *
+from tkinter import ttk, messagebox, PhotoImage
+from PIL import ImageGrab, ImageTk
 from TEXT_processing import time_table, getItemsBySubTheme, setClassInfo
 from itertools import product
-import datetime, random
+import datetime, random, sys, os
 
+def resource_path(relative_path):
+    """ Get absolute path to resource, works for dev and for PyInstaller """
+    try:
+        # PyInstaller creates a temp folder and stores path in _MEIPASS
+        base_path = sys._MEIPASS
+    except Exception:
+        base_path = os.path.abspath(".")
+
+    return os.path.join(base_path, relative_path)
 
 ################################################################
 ##########       global variables 정의 및 초기화       ##########
@@ -18,13 +27,15 @@ tab_control = ttk.Notebook(window)
 tab1 = ttk.Frame(tab_control)
 tab2 = ttk.Frame(tab_control)
 tab3 = ttk.Frame(tab_control)
+tab4 = ttk.Frame(tab_control)
 tab_control.add(tab1, text='과목선택')
 tab_control.add(tab2, text='그룹')
 tab_control.add(tab3, text='결과보기')
+tab_control.add(tab4, text='캡쳐모음')
 tab_control.pack(expand=1, fill='both')
-tab3_frame1, tab2_frame2, tab3_frame3 = ttk.Frame(), ttk.Frame(), ttk.Frame()
+tab3_frame1, tab2_frame2, tab3_frame3, tab4_frame1 = ttk.Frame(), ttk.Frame(), ttk.Frame(), ttk.Frame()
 
-lecture_objs = time_table("timetable.txt")
+lecture_objs = time_table(resource_path("timetable.txt"))
 for obj in lecture_objs:
     setClassInfo(obj)
 
@@ -207,11 +218,22 @@ def search_subjects():    # Search버튼 누르면 조건에 맞는 강의들을
 
 
 def shot():
+    global tab4_frame1, captured, ldr, scb2
     img = ImageGrab.grab((2, 25, 533, 700))
     nowdate = datetime.datetime.now()
     re_now = nowdate.strftime("%Y-%m-%d %H%M%S")
-    img.save(re_now + '.png')
-
+    img.save(resource_path('MyTables_/' + re_now + '.png'))
+    
+    tab4_frame1 = ttk.Frame(tab4)
+    tab4_frame1.grid(row=0, column=1)
+    captured = Listbox(tab4_frame1, width=20, height=10)
+    ldr = os.listdir(resource_path("MyTables_"))
+    for i in range(len(ldr) - 1):
+        captured.insert(i, ldr[i + 1])
+    captured.pack(side="left")
+    scb2 = Scrollbar(tab4_frame1, command=captured.yview)
+    scb2.pack(side = "right", fill = "y")
+    captured.config(yscrollcommand=scb2.set)
 
 def combinating():
     global tab3_frame2, test_lists
@@ -637,11 +659,73 @@ for i in range(0, 7):  # 시간표 틀
         else:
             Label(tab3_frame1, width=10, height=3, bg="white", relief='solid', bd=0.1).grid(row=k+2, column=i)
 
+#####################################
+#######   tab 4 (캡쳐모음)   #######
+#####################################
+
+def show_shot_img():
+    global captured, ldr, shot_img
+    idx = -1
+    try:
+        idx = captured.curselection()[0]    # 리스트박스에서 선택된 과목의 인덱스
+    except:
+        messagebox.showinfo("오류", "사진을 선택하세요")
+        return
+
+    img2 = PhotoImage(file = (resource_path("MyTables_/" + ldr[idx + 1])))
+    shot_img.configure(image=img2)
+    shot_img.image = img2
+    
+
+    
+    
+    
+Button(tab4, text = "보기", width=10, bg="skyblue", command=show_shot_img).grid(row=1, column=1)
+asd = PhotoImage(file = resource_path("MyTables_/0basic.png"))
+shot_img = Label(tab4, image=asd)
+shot_img.grid(row=0, column=0, rowspan = 15)
+tab4_frame1 = ttk.Frame(tab4)
+tab4_frame1.grid(row=0, column=1)
+captured = Listbox(tab4_frame1, width=20, height=10)
+ldr = os.listdir(resource_path("MyTables_"))
+for i in range(len(ldr) - 1):
+    captured.insert(i, ldr[i + 1])
+captured.pack(side="left")
+scb2 = Scrollbar(tab4_frame1, command=captured.yview)
+scb2.pack(side = "right", fill = "y")
+captured.config(yscrollcommand=scb2.set)
+
+def file_delete():
+    global captured, ldr
+    idx = -1
+    try:
+        idx = captured.curselection()[0]    # 리스트박스에서 선택된 과목의 인덱스
+    except:
+        messagebox.showinfo("오류", "파일을 선택하세요")
+        return
+    
+    file_dir = resource_path("MyTables_/" + ldr[idx + 1])
+    if os.path.isfile(file_dir):
+        os.remove(file_dir)
+    else:
+        messagebox.showinfo("오류", "파일을 선택하세요")
+    
+    tab4_frame1 = ttk.Frame(tab4)
+    tab4_frame1.grid(row=0, column=1)
+    captured = Listbox(tab4_frame1, width=20, height=10)
+    ldr = os.listdir(resource_path("MyTables_"))
+    for i in range(len(ldr) - 1):
+        captured.insert(i, ldr[i + 1])
+    captured.pack(side="left")
+    scb2 = Scrollbar(tab4_frame1, command=captured.yview)
+    scb2.pack(side = "right", fill = "y")
+    captured.config(yscrollcommand=scb2.set)
 
 # 기타 나머지
 Button(tab1, text="EXIT", width=10, bg="slateblue2", fg="white", command=exit_window).grid(row=17, column=0)
 Label(tab2).grid(row=11, column=2) # 공백
 Button(tab2, text="EXIT", width=10, bg="slateblue2", fg="white", command=exit_window).grid(row=12, column=2)
 Button(tab3, text="EXIT", width=10, bg="slateblue2", fg="white", command=exit_window).grid(row=2, column=0, sticky='w')
-
+Button(tab4, text="삭제", width=10, bg="red", fg="white", command=file_delete).grid(row=2, column=1)
+Button(tab4, text="EXIT", width=10, bg="slateblue2", fg="white", command=exit_window).grid(row=3, column=1)
 window.mainloop()
