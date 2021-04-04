@@ -1,38 +1,37 @@
-test_cases, primes, primes2 = [], [], []
+import sys
 
-def goldbach_conjecture(num):
-    for a in primes:
-        for b in primes2:
-            if a > b:
-                print("Goldbach's conjecture is wrong.")
-                return
-            else:
-                if num == a + b:
-                    print("%d = %d + %d" % (num, a, b))
+def goldbach_conjecture(get):
+    global size
+    for number in range(3, int(size ** 0.5) + 1):
+        a, b = number, get - number
+        if a >= 3 and b >= 3:
+            if primes[a] and primes[b]:
+                if a + b == get:
+                    print("%d = %d + %d" % (get, a, b))
                     return
+    print("Goldbach's conjecture is wrong.")
+    return
 
-def setOddPrimes(max_num):
-    global primes, primes2
-    for num in range(3, max_num + 1, 2): # 홀수only, 2는 문제에서 제외시킴
-        if isPrime(num):
-            primes.append(num)
-    primes2 = list(reversed(primes))
+def setPrimes(size):
+    size += 1
+    numbers = [True] * size
 
-def isPrime(num):
-    i = 2
-    while i * i <= num:
-        if num % i == 0:
-            return False
-        i += 1
-    return True
+    for i in range(2, int(size ** 0.5) + 1): # sqrt
+        if numbers[i]:
+            for j in range(2 * i, size, i):
+                ''' start = 남은 소수 중 첫번째는 소수이므로 두번째부터
+                end = size - 1 = 1000000 까지
+                step = i의 배수들을 False로 정의한다.
+                
+                -  합성수를 활용한 에라토스테네스의 체  -  '''
+                numbers[j] = False
+
+    return numbers
+
+size = 1000000
+primes = setPrimes(size)
 
 while True:
-    get = int(input())
-    if get == 0:
-        break
-    else:
-        test_cases.append(get)
-
-setOddPrimes(max(test_cases))
-for case in test_cases:
-    goldbach_conjecture(case)
+    get = int(sys.stdin.readline().rstrip())
+    if get == 0: break
+    else: goldbach_conjecture(get)
