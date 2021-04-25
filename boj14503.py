@@ -30,7 +30,7 @@ class RobotCleaner:
             elif self.facing == RobotCleaner.direction['S']:
                 self.r -= 1
             elif self.facing == RobotCleaner.direction['W']:
-                self.c += 1        
+                self.c += 1
 
     def turnLeft(self):
         if self.facing - 1 >= 0:
@@ -39,83 +39,108 @@ class RobotCleaner:
             self.facing = RobotCleaner.direction['W']
 
     def check(self, where_to_check: str) -> int:
-        '''청소했으면(2이면) return 0
-           벽이있으면(1이면) return -1
-           청소안했으면(0이면) return 1'''
+        '''
+        청소했으면(2이면) return 2
+        벽이있으면(1이면) return 1
+        청소안했으면(0이면) return 0
+        '''
 
         if where_to_check == 'left':
             if self.facing == RobotCleaner.direction['N']:
                 if floor[self.r][self.c - 1] == 2:
-                    return 0
+                    return 2
                 elif floor[self.r][self.c - 1] == 1:
-                    return -1
-                else:
                     return 1
+                else:
+                    return 0
             elif self.facing == RobotCleaner.direction['E']:
                 if floor[self.r - 1][self.c] == 2:
-                    return 0
+                    return 2
                 elif floor[self.r - 1][self.c] == 1:
-                    return -1
-                else:
                     return 1
+                else:
+                    return 0
             elif self.facing == RobotCleaner.direction['S']:
                 if floor[self.r][self.c + 1] == 2:
-                    return 0
+                    return 2
                 elif floor[self.r][self.c + 1] == 1:
-                    return -1
-                else:
                     return 1
+                else:
+                    return 0
             elif self.facing == RobotCleaner.direction['W']:
                 if floor[self.r + 1][self.c] == 2:
-                    return 0
+                    return 2
                 elif floor[self.r + 1][self.c] == 1:
-                    return -1
-                else:
                     return 1
+                else:
+                    return 0
 
         elif where_to_check == 'back':
             if self.facing == RobotCleaner.direction['N']:
                 if floor[self.r + 1][self.c] == 2:
-                    return 0
+                    return 2
                 elif floor[self.r + 1][self.c] == 1:
-                    return -1
-                else:
                     return 1
+                else:
+                    return 0
             elif self.facing == RobotCleaner.direction['E']:
                 if floor[self.r][self.c - 1] == 2:
-                    return 0
+                    return 2
                 elif floor[self.r][self.c - 1] == 1:
-                    return -1
-                else:
                     return 1
+                else:
+                    return 0
             elif self.facing == RobotCleaner.direction['S']:
                 if floor[self.r - 1][self.c] == 2:
-                    return 0
+                    return 2
                 elif floor[self.r - 1][self.c] == 1:
-                    return -1
-                else:
                     return 1
+                else:
+                    return 0
             elif self.facing == RobotCleaner.direction['W']:
                 if floor[self.r][self.c + 1] == 2:
-                    return 0
+                    return 2
                 elif floor[self.r][self.c + 1] == 1:
-                    return -1
-                else:
                     return 1
+                else:
+                    return 0
         elif where_to_check == 'all':
-            pass
-    def isStopCondition(self):
-        #if self.check('all') and self.
-        pass
+            p1, p2, p3, p4 = \
+            floor[self.r + 1][self.c], floor[self.r - 1][self.c],\
+            floor[self.r][self.c + 1], floor[self.r][self.c - 1] # 절대좌표 하, 상, 우, 좌
+            zero_count = 0
+            ps = [p1, p2, p3, p4]
+            for p in ps:
+                if p == 0:
+                    zero_count += 1
+            if zero_count == 0:
+                return True
+            else: # 청소 안한 곳 1군데 이상
+                return False
     
-    
-floor = []
-n, m = map(int, input().split())
-r, c, d = map(int, input().split())
-for _ in range(n):
-    floor.append(list(map(int, input().split())))
-    
-r = RobotCleaner(r, c, d)
+def main():
+    n, m = map(int, input().split())
+    r, c, d = map(int, input().split())
+    for _ in range(n):
+        floor.append(list(map(int, input().split())))
+        
+    r = RobotCleaner(r, c, d)
 
-while not r.isStopCondition():
-    pass
+    r.clean()
+    while True:    
+        if r.check('left') == 0:
+            r.turnLeft()
+            r.move('forward')
+            r.clean()
+        else:
+            r.turnLeft()
+        
+        while r.check('all'):
+            if r.check('back') == 1:
+                print(r.clean_count)
+                return
+            else:
+                r.move('back')
+
+floor = []
+main()
