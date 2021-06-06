@@ -146,7 +146,6 @@ def time_table(raw):
 
 	data.close()
 
-
 def test(choice):
 	for i in k[choice]:
 		print("대분류 : \t\t", i.main_theme)
