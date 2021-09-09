@@ -1,3 +1,4 @@
+# 시간 초과 해결 필요
 t = int(input())
 
 class Cursor:
@@ -30,4 +31,3 @@ for _ in range(t):
     for cmd in typing.orders:
         typing.Move_or_Erase(cmd)
     print(typing.getPassword())
-
