@@ -18,7 +18,6 @@ int is_prime(int n) {
 		return 1;
 	}
 }
-
 int prime_count_from_n_to_2n(int n) {
 	int count = 0;
 	for (int i = n+1; i < 2*n; i++) {
@@ -28,7 +27,6 @@ int prime_count_from_n_to_2n(int n) {
 	}
 	return count;
 }
-
 int main() {
 
 	while (1) {
