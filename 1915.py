@@ -40,4 +40,22 @@
 #     if endX == n - 1 and endY == m - 1 and side == 1:
 #         break
     
-# print(maxSquare)    
+# print(maxSquare)
+
+import sys
+
+n, m = map(int, sys.stdin.readline().rstrip().split())
+arr = [list(map(int, list(sys.stdin.readline().rstrip()))) for _ in range(n)]
+
+for line in arr:
+    line.insert(0, 0)
+arr.insert(0, list([0] * (m + 1)))
+
+result = 0
+for x in range(len(arr)):
+    for y in range(len(arr[x])):
+        if arr[x][y] == 1:
+            arr[x][y] += min(arr[x - 1][y], arr[x][y - 1], arr[x - 1][y - 1])
+        result = max(result, arr[x][y])
+
+print(result ** 2)
