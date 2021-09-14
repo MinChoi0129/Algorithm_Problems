@@ -1,33 +1,29 @@
-# 시간 초과 해결 필요, 1339도 풀자!
-t = int(input())
+from collections import deque
 
-class Cursor:
-    
-    def __init__(self, orders):
-        self.index = 0
-        self.orders = orders
-        self.password = []
-
-    def Move_or_Erase(self, cmd):
-        if cmd == "<":
-            if self.index > 0:
-                self.index -= 1
-        elif cmd == ">":
-            if self.index != len(self.password):
-                self.index += 1
-        elif cmd == "-":
-            if self.index != 0:
-                self.password.pop(self.index -1)
-                self.index -= 1
+def keyLoger(left : deque, right : deque, password : str):
+    for cmd in password:
+        if cmd == '<':
+            try:
+                right.appendleft(left.pop())
+            except:
+                pass
+        elif cmd == '>':
+            try:
+                left.append(right.popleft())
+            except:
+                pass
+        elif cmd == '-':
+            try:
+                left.pop()
+            except:
+                pass
         else:
-            self.password.insert(self.index, cmd)
-            self.index += 1
+            left.append(cmd)
+            
+    return ''.join(left + right)
 
-    def getPassword(self):
-        return ''.join(self.password)
-
-for _ in range(t):
-    typing = Cursor(input())
-    for cmd in typing.orders:
-        typing.Move_or_Erase(cmd)
-    print(typing.getPassword())
+for _ in range(int(input())):
+    left = deque()
+    right = deque()
+    password = list(input())
+    print(keyLoger(left, right, password))
