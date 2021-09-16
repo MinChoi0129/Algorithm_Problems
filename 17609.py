@@ -5,11 +5,10 @@ def check(string : list):
     
     # check 0
     palindrome = 0
-    start, end = 0, len(string)
+    start, end = 0, len(string) - 1
     while start < end:
         if string[start] != string[end]:
-            palindrome = 1
-            break
+            return 1
         start += 1
         end -= 1
     if palindrome == 0:
@@ -22,17 +21,16 @@ def check(string : list):
         copyString = copy.deepcopy(string)
         copyString.pop(i)
         possibles.append(copyString)
-
+        
     for possible in possibles:
-        start, end = 0, len(possible)
-        while start < end:
-            if possible[start] != possible[end]:
-                break
-            start += 1
-            end -= 1
-        return 1
+        length = len(possible)
+        if length % 2 == 0:
+            if possible[ : length // 2] == list(reversed(possible[length // 2 : ])):
+                return 1
+        else:
+            if possible[ : length // 2] == list(reversed(possible[length // 2 + 1 : ])):
+                return 1
     return 2
-    
 
 for _ in range(int(input())):
-    check(list(input()))
+    print(check(list(input())))
