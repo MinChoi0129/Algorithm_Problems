@@ -46,7 +46,7 @@ class BabyShark:
             
             
         closestFishes.sort(key = lambda x : (x[0], x[1]))
-        return [closestFishes[0], minDistance]
+        return [closestFishes[0], minDistance] if len(closestFishes) > 0 else -1
     
     def 나와물고기사이의astar거리(self, fishPos):
         global board, n
@@ -93,7 +93,7 @@ class BabyShark:
                 if visited[newX][newY]:
                     continue
                 visited[newX][newY] = True
-                g = abs(newX - self.position[0]) + abs(newY - self.position[1])
+                g = abs(newX - start[0]) + abs(newY - start[1])
                 h = abs(newX - goal[0]) + abs(newY - goal[1])
                 f = g + h
                 if effF > f:
