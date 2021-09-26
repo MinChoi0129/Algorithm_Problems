@@ -9,6 +9,7 @@ class BabyShark:
         self.eatCount = 0 # 먹은 횟수
         self.position = position # 현위치 [x, y]
         
+        
     def move(self, to, time):
         global board
         
@@ -22,15 +23,15 @@ class BabyShark:
         if self.eatCount == self.size: # 크기만큼 먹어야 몸집 1 증가
             self.size += 1
             self.eatCount = 0 # 몸 커졌으니 다시 먹은 횟수 초기화
-            
- 
+
+
     def bfs(self):
         global board, n 
         
         Q = deque([[self.position[0], self.position[1]]]) # 큐 초기화
         visited = [[0] * n for _ in range(n)] # 방문횟수 초기화
         visited[self.position[0]][self.position[1]] = 1 # 첫 위치 방문처리
-        
+
 
         approachableFishes = [] # 닿을 수 있으면서 먹을수도 있는 물고기들
         while Q:
