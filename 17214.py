@@ -16,8 +16,6 @@ statement.append(tmp)
 if '' in statement:
     statement.pop(0)
 
-print(statement)
-
 for i in statement:
     if i == '+' or i == '-':
         print(i, end = "")
