@@ -1,6 +1,3 @@
-from typing import NewType
-
-
 def solution(all_infos, all_queries):
     languages = {'cpp':set(), 'java':set(), 'python':set(), '-':set(range(len(all_infos)))}
     side = {'backend':set(), 'frontend':set(), '-':set(range(len(all_infos)))}
