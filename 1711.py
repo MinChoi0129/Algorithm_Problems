@@ -2,29 +2,29 @@ import sys, math
 input = lambda : sys.stdin.readline().rstrip()
 from itertools import combinations as C
 
-def isRightTriangle(points):
-    abab = int((points[0][0] - points[1][0]) ** 2) + int((points[0][1] - points[1][1]) ** 2)
-    bcbc = int((points[1][0] - points[2][0]) ** 2) + int((points[1][1] - points[2][1]) ** 2)
-    caca = int((points[2][0] - points[0][0]) ** 2) + int((points[2][1] - points[0][1]) ** 2)
-    longest = max(abab, bcbc, caca)
-    if longest == abab:
-        if abab == bcbc + caca:
-            return True
-    elif longest == bcbc:
-        if bcbc == abab + caca:
-            return True
-    elif longest == caca:
-        if caca == abab + bcbc:
-            return True
+def isRightTriangle(Pa, Pb, Pc):
+    vecAB = (Pb[0]-Pa[0], Pb[1]-Pa[1])
+    vecBA = (-Pb[0]+Pa[0], -Pb[1]+Pa[1])
+    
+    vecAC = (Pc[0]-Pa[0], Pc[1]-Pa[1])
+    vecCA = (-Pc[0]+Pa[0], -Pc[1]+Pa[1])
+    
+    vecBC = (Pc[0]-Pb[0], Pc[1]-Pb[1])
+    vecCB = (-Pc[0]+Pb[0], -Pc[1]+Pb[1])
+    
+    
+    if vecAB[0] * vecAC[0] + vecAB[1] * vecAC[1] == 0: # A기준
+        return True
+    if vecBA[0] * vecBC[0] + vecBA[1] * vecBC[1] == 0: # B기준
+        return True
+    if vecCA[0] * vecCB[0] + vecCA[1] * vecCB[1] == 0: # C기준
+        return True
     return False
     
 allPoints = [[*map(int, input().split())] for _ in range(int(input()))]
+allPoints.sort()
 count = 0
-while allPoints:
-    Pa = allPoints.pop()
-    PbPcs = list(C(allPoints, 2))
-    for Pb, Pc in PbPcs:
-        test = [Pa, Pb, Pc]
-        if isRightTriangle(test):
-            count += 1
+for Pa, Pb, Pc in C(allPoints, 3):
+    if isRightTriangle(Pa, Pb, Pc):
+        count += 1
 print(count)
