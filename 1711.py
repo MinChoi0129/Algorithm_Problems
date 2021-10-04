@@ -1,6 +1,5 @@
-import sys, math
+import sys
 input = lambda : sys.stdin.readline().rstrip()
-from itertools import combinations as C
 
 def isRightTriangle(Pa, Pb, Pc):
     vecAB = (Pb[0]-Pa[0], Pb[1]-Pa[1])
@@ -20,11 +19,16 @@ def isRightTriangle(Pa, Pb, Pc):
     if vecCA[0] * vecCB[0] + vecCA[1] * vecCB[1] == 0: # C기준
         return True
     return False
-    
-allPoints = [[*map(int, input().split())] for _ in range(int(input()))]
-allPoints.sort()
+
+allPoints = []
+for _ in range(int(input())):
+    a, b = map(int, input().split())
+    allPoints.append([a, b])
+
 count = 0
-for Pa, Pb, Pc in C(allPoints, 3):
-    if isRightTriangle(Pa, Pb, Pc):
-        count += 1
+for i in range(len(allPoints)):
+    for j in range(i + 1, len(allPoints)):
+        for k in range(j + 1, len(allPoints)):
+            if isRightTriangle(allPoints[i], allPoints[j], allPoints[k]):
+                count += 1
 print(count)
