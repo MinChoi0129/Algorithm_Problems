@@ -1,14 +1,20 @@
 n = int(input())
 towers = [*map(int, input().split())]
+stack = []
 
-for i in range(n):
-    approach = 0
-    tmp = towers[:i][::-1]
-    print(towers[i], "--->", end = " ")
-    print(tmp)
-    for j in range(len(tmp)):
-        if tmp[j] > towers[i]:
-            approach = i - j
-            break
-    # print(approach, end = " ")
-    print(approach)
+for i in range(len(towers)):
+    height, number = towers[i], i + 1
+    if not stack:
+        print(0, end = " ")
+        stack.append({'height' : height, 'number' : number})
+    else:
+        while stack:
+            recentTower = stack[-1]
+            if recentTower['height'] <= height:
+                stack.pop()
+                if not stack:
+                    print(0, end = " ")
+            elif recentTower['height'] > height:
+                print(recentTower['number'], end = " ")
+                break
+        stack.append({'height' : height, 'number' : number})
