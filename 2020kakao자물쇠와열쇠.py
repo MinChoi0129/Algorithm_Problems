@@ -43,6 +43,10 @@ def getFourKeys(key):
 
     
 def solution(key, lock):
+    lockZeroCount = 0
+    for line in lock:
+        for num in line:
+            if num == 0: lockZeroCount += 1
     n, m = len(lock), len(key)
     paddedLock = [[0.5] * (n * 3) for _ in range(n * 3)]
     keys = getFourKeys(key)
@@ -67,8 +71,6 @@ def solution(key, lock):
                 for num in line:
                     if num == 0: count += 1
 
-            if count == 2 and keyCheck(keys, tmpBoard, m):
+            if count == lockZeroCount and keyCheck(keys, tmpBoard, m):
                 return True
     return False
-
-print(solution([[0, 0, 0], [1, 0, 0], [0, 1, 1]], [[1, 1, 1], [1, 1, 0], [1, 0, 1]]))
