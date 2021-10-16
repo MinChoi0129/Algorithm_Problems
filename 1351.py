@@ -1,15 +1,13 @@
 n, p, q = map(int, input().split())
 
-seq = [1]
-floorDB = dict()
+a = dict()
+a[0] = 1
 
-for i in range(1, n + 1):
-    if i // p not in floorDB:
-        floorDB[(i // p)] = i // p
-    if i // q not in floorDB:
-        floorDB[(i // q)] = i // q
-    
-for i in range(1, n + 1):
-    seq.append(seq[floorDB[(i // p)]] + seq[floorDB[(i // q)]])
+def dfs(num):
+    try:
+        return a[num]
+    except:
+        a[num] = dfs(num // p) + dfs(num // q)
+        return a[num]
 
-print(seq[n])
+print(dfs(n))
