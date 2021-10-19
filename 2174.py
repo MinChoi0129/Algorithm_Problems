@@ -62,11 +62,10 @@ class Robot:
                         self.direction = 'W'
                     elif self.direction == 'N':
                         self.direction = 'E'
-            return True
                 
 A, B = map(int, input().split())
 N, M = map(int, input().split())
-my_robots = [Robot(-2, -2, "N")]
+my_robots = [Robot(-1, -1, "N")]
 
 for _ in range(N):
     tmp = input().split()
