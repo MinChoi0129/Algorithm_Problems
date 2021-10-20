@@ -1,3 +1,5 @@
+import sys
+sys.setrecursionlimit(100000000)
 n, p, q, x, y = map(int, input().split())
 
 a = dict()
