@@ -90,3 +90,14 @@ while True:
                 special_sorter('R')
             else:
                 special_sorter('C')
+                
+'''
+3 3 3
+1 1 1
+1 1 1
+1 1 1
+
+2
+
+이것만 처리하면 끝
+'''
