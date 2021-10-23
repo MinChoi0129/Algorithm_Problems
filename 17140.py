@@ -9,8 +9,6 @@ def rotate_90_degree(arr, clockwise):
         return list(map(list, zip(*reversed([*arr]))))
     else:
         return [list(i) for i in reversed(tuple(zip(*arr)))]
-                
-        
 
 def special_sorter(sorting_mode):
     global global_timer, board
@@ -29,7 +27,7 @@ def special_sorter(sorting_mode):
             for i in sorted(list(checker.items()), key = lambda x : (x[1], x[0])):
                 new_line += list(i)
             line.clear()
-            for i in range(len(new_line) % 101):
+            for i in range(len(new_line) % 100):
                 line.append(new_line[i])
         
         # 삐죽빼죽한 상태
@@ -58,7 +56,7 @@ def special_sorter(sorting_mode):
             for i in sorted(list(checker.items()), key = lambda x : (x[1], x[0])):
                 new_line += list(i)
             line.clear()
-            for i in range(len(new_line) % 101):
+            for i in range(len(new_line) % 100):
                 line.append(new_line[i])
         
         # 삐죽빼죽한 상태
@@ -72,16 +70,17 @@ def special_sorter(sorting_mode):
                 line.append(0)
         
         board = rotate_90_degree(new_board, clockwise = True)
-        
-
 
 while True:
     if global_timer > 100:
+        if not (len(board) >= r and len(board[0]) >= c):
+            print(-1)
+            break
         if board[r - 1][c - 1] != k:
             print(-1)
             break
     else:
-        if board[r - 1][c - 1] == k:
+        if (len(board) >= r and len(board[0]) >= c) and board[r - 1][c - 1] == k:
             print(global_timer)
             break
         else:
@@ -90,14 +89,3 @@ while True:
                 special_sorter('R')
             else:
                 special_sorter('C')
-                
-'''
-3 3 3
-1 1 1
-1 1 1
-1 1 1
-
-2
-
-이것만 처리하면 끝
-'''
