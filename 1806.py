@@ -1,11 +1,22 @@
-n, s = map(int, input().split())
-# seq = [*map(int, input().split())]
-# dp = [[0] * n for _ in range(n)] # dp[x][y] : 인덱스x~인덱스y까지의 합
-# dp[0][0] = seq[0]
+# n, s = map(int, input().split())
+# arr = [*map(int, input().split())]
 
+# gap = 1
+# p1 = 0
+# p2 = p1 + gap
 
-# for x in range(n):
-#     for y in range(x, n):
-#         dp[x][y] = dp[x][y - 1] + seq[y]
+# while True:
+#     if sum(arr[p1 : p2 + 1]) >= s:
+#         print(gap + 1)
+#         break
+        
+#     if gap == n - 1:
+#         break
+        
+#     if p2 == n - 1:
+#         p1 = 0
+#         gap += 1
+#         p2 = p1 + gap
 
-
+#     else:
+#         p1 += 1; p2 = p1 + gap
