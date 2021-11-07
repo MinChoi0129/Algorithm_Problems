@@ -1,164 +1,43 @@
 n, m = map(int, input().split())
-paper = [list(map(int, input().split())) for _ in range(n)]
-from time import sleep
-import os
-    
-def tryMode(color, rotate):
-    print("=============================")
-    if color == "blue":
-        if rotate == 0:
-            dx = [0] # 모드별 수정
-            dy = [0, 1, 2, 3] # 모드별 수정
-            maxSum = 0
-            while True:
-                sleep(0.5)
-                tmpSum = 0
-                for x in dx: # 모드별 수정
-                    for y in dy: # 모드별 수정
-                        print(paper[x][y], end = " ")
-                        tmpSum += paper[x][y]
-                    print()
-                print("tmp :", tmpSum, "VS", "max :", maxSum)
-                if tmpSum > maxSum:
-                    maxSum = tmpSum
-                
+paper = [[*map(int, input().split())] for _ in range(n)]
 
-                if dy[-1] + 1 <= m - 1:
-                    for i in range(len(dy)):
-                        dy[i] += 1
-                
-                else:
-                    dy = [0, 1, 2, 3] # 모드별 수정
-                    if dx[-1] + 1 <= n - 1:
-                        for i in range(len(dx)):
-                            dx[i] += 1
-                    else:
-                        print("최댓값 =", maxSum)
-                        return maxSum
-        elif rotate == 90:
-            dx = [0, 1, 2, 3] # 모드별 수정
-            dy = [0] # 모드별 수정
-            maxSum = 0
-            while True:
-                sleep(0.5)
-                tmpSum = 0
-                for y in dy: # 모드별 수정
-                    for x in dx: # 모드별 수정
-                        print(paper[x][y], end = " ")
-                        tmpSum += paper[x][y]
-                    print()
-                print("tmp :", tmpSum, "VS", "max :", maxSum)
-                if tmpSum > maxSum:
-                    maxSum = tmpSum
-                
+blue_1 = [[0, 0], [0, 1], [0, 2], [0, 3]]
+blue_2 = [[0, 0], [1, 0], [2, 0], [3, 0]]
+yellow = [[0, 0], [0, 1], [1, 0], [1, 1]]
+orange_1 = [[0, 0], [1, 0], [2, 0], [2, 1]]
+orange_2 = [[0, 1], [1, 1], [2, 1], [2, 0]]
+orange_3 = [[0, 0], [0, 1], [1, 0], [2, 0]]
+orange_4 = [[0, 0], [0, 1], [1, 1], [2, 1]]
+orange_5 = [[0, 0], [0, 1], [0, 2], [1, 0]]
+orange_6 = [[0, 0], [0, 1], [0, 2], [1, 2]]
+orange_7 = [[0, 2], [1, 0], [1, 1], [1, 2]]
+orange_8 = [[0, 0], [1, 0], [1, 1], [1, 2]]
+green_1 = [[0, 0], [1, 0], [1, 1], [2, 1]]
+green_2 = [[0, 1], [0, 2], [1, 0], [1, 1]]
+green_3 = [[0, 1], [1, 0], [1, 1], [2, 0]]
+green_4 = [[0, 0], [0, 1], [1, 1], [1, 2]]
+purple_1 = [[0, 1], [1, 0], [1, 1], [1, 2]]
+purple_2 = [[0, 1], [1, 0], [1, 1], [2, 1]]
+purple_3 = [[0, 0], [1, 0], [2, 0], [1, 1]]
+purple_4 = [[0, 0], [0, 1], [0, 2], [1, 1]]
 
-                if dy[-1] + 1 <= m - 1:
-                    for i in range(len(dy)):
-                        dy[i] += 1
-                
-                else:
-                    dy = [0] # 모드별 수정
-                    if dx[-1] + 1 <= n - 1:
-                        for i in range(len(dx)):
-                            dx[i] += 1
-                    else:
-                        print("최댓값 =", maxSum)
-                        return maxSum
+tetrominos = [
+    blue_1, blue_2, yellow, orange_1, orange_2, orange_3, orange_4, \
+    orange_5, orange_6, orange_7, orange_8, green_1, green_2, green_3, \
+    green_4, purple_1, purple_2, purple_3, purple_4, \
+    ]
 
-    if color == "yellow":
-        dx = [0, 1] # 모드별 수정
-        dy = [0, 1] # 모드별 수정
-        maxSum = 0
-        while True:
-            sleep(0.5)
-            tmpSum = 0
-            for x in dx: # 모드별 수정
-                for y in dy: # 모드별 수정
-                    print(paper[x][y], end = " ")
-                    tmpSum += paper[x][y]
-                print()
-            print("tmp :", tmpSum, "VS", "max :", maxSum)
-            if tmpSum > maxSum:
-                maxSum = tmpSum
-            
+max_value = 0
+for tetromino in tetrominos:
+    for dx in range(n):
+        for dy in range(m):
+            tmp_score = 0
+            for x, y in tetromino:
+                try:
+                    tmp_score += paper[x+dx][y+dy]
+                except:
+                    tmp_score = 0
+                    break
+            max_value = max(max_value, tmp_score)
 
-            if dy[-1] + 1 <= m - 1:
-                for i in range(len(dy)):
-                    dy[i] += 1
-            
-            else:
-                dy = [0, 1] # 모드별 수정
-                if dx[-1] + 1 <= n - 1:
-                    for i in range(len(dx)):
-                        dx[i] += 1
-                else:
-                    print("최댓값 =", maxSum)
-                    return maxSum
-
-    if color == "orange":
-        if rotate == 0:
-            dx = [0, 1, 2] # 모드별 수정
-            dy = [0] # 모드별 수정
-            maxSum = 0
-            while True:
-                sleep(0.5)
-                tmpSum = 0
-                for x in dx: # 모드별 수정
-                    for y in dy: # 모드별 수정
-                        print(paper[x][y], end = " ")
-                        tmpSum += paper[x][y]
-                    print()
-                print("tmp :", tmpSum, "VS", "max :", maxSum)
-                if tmpSum > maxSum:
-                    maxSum = tmpSum
-                
-
-                if dy[-1] + 1 <= m - 1:
-                    for i in range(len(dy)):
-                        dy[i] += 1
-                
-                else:
-                    dy = [0, 1, 2, 3] # 모드별 수정
-                    if dx[-1] + 1 <= n - 1:
-                        for i in range(len(dx)):
-                            dx[i] += 1
-                    else:
-                        print("최댓값 =", maxSum)
-                        return maxSum
-        elif rotate == 90:
-            dx = [0, 1, 2, 3] # 모드별 수정
-            dy = [0] # 모드별 수정
-            maxSum = 0
-            while True:
-                sleep(0.5)
-                tmpSum = 0
-                for y in dy: # 모드별 수정
-                    for x in dx: # 모드별 수정
-                        print(paper[x][y], end = " ")
-                        tmpSum += paper[x][y]
-                    print()
-                print("tmp :", tmpSum, "VS", "max :", maxSum)
-                if tmpSum > maxSum:
-                    maxSum = tmpSum
-                
-
-                if dy[-1] + 1 <= m - 1:
-                    for i in range(len(dy)):
-                        dy[i] += 1
-                
-                else:
-                    dy = [0] # 모드별 수정
-                    if dx[-1] + 1 <= n - 1:
-                        for i in range(len(dx)):
-                            dx[i] += 1
-                    else:
-                        print("최댓값 =", maxSum)
-                        return maxSum
-
-os.system("clear")
-dx, dy = [], []
-maxList = [
-    tryMode("blue", 0), tryMode("blue", 90),
-    tryMode("yellow", 0),
-]
-print("\n\nREAL MAXIMUM = ", max(maxList))
+print(max_value)
