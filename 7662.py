@@ -10,13 +10,13 @@ for _ in range(int(input())): # T
             if not Q_max:
                 continue            
             if num == 1: # 최댓값 삭제
-                max_num = heapq.heappop(Q_max) # O(log(n))
-                Q_min.remove(-max_num)# O(n)
-                heapq.heapify(Q_min) # O(log(n))
+                heapq.heappop(Q_max) # O(log(n))
+                Q_min = []
+                for num in Q_max: heapq.heappush(Q_min, -num)
             elif num == -1: # 최솟값 각제
-                min_num = heapq.heappop(Q_min) # O(log(n))
-                Q_max.remove(-min_num) # O(n)
-                heapq.heapify(Q_max) # O(log(n))
+                heapq.heappop(Q_min) # O(log(n))
+                Q_max = []
+                for num in Q_min: heapq.heappush(Q_max, -num)
         elif op == 'I':
             heapq.heappush(Q_max, -num) # O(nlog(n))
             heapq.heappush(Q_min, num) # O(nlog(n))
