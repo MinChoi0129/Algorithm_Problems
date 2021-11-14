@@ -7,8 +7,7 @@ for i in range(10):
     is_descending[str(i)] = True
     
 num = 10
-while True:
-    
+while True:    
     if num > 987654321 or count >= n + 1:
         break
     
