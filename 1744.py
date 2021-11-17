@@ -1,33 +1,21 @@
-# from copy import deepcopy
-# from itertools import combinations as C
+from collections import deque
 
-# def isCompatible(arr):
-#     only_operator = []
-#     for char in arr:
-#         if char == '*':
-#             if only_operator and only_operator[-1] == '*': return False
-#             else: only_operator.append(char)            
-#         elif char == '+': only_operator.append(char)
-#     return True
+arr = [int(input()) for i in range(int(input()))]
+positive, negative = [], []
 
-# n = int(input())
+answer = 0
+for num in arr:
+    if num > 1: positive.append(num)
+    elif num == 1: answer += 1
+    else: negative.append(num) # 0은 음수쪽으로 들어감
 
-# if n == 1:
-#     print(input())
-# else:
-#     full_arr = ["+" for _ in range(2*n - 1)]
-#     num_arr = [str(i) for i in sorted([int(input()) for _ in range(n)])]
+positive, negative = deque(sorted(positive, reverse=True)), deque(sorted(negative))
 
-#     for i in range(0, 2*n - 1, 2):
-#         num = num_arr[i // 2]
-#         if num[0] == '-': full_arr[i] = '(' + num + ')'
-#         else: full_arr[i] = num
+while len(positive) >= 2 or len(negative) >= 2:
+    if len(positive) >= 2: answer += positive.popleft() * positive.popleft()
+    if len(negative) >= 2: answer += negative.popleft() * negative.popleft()
 
-#     max_result = int(-1e9)
-#     for i in range(n - 1):
-#         for case in C(range(1, 2*n - 1, 2), i):
-#             copied_arr = deepcopy(full_arr)
-#             for idx in case: copied_arr[idx] = '*'       
-#             if isCompatible(copied_arr): max_result = max(max_result, eval(''.join(copied_arr)))
+if positive: answer += positive[0]
+if negative: answer += negative[0]
 
-#     print(max_result)
+print(answer)
