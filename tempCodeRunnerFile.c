@@ -1,2 +1,0 @@
-
-    printf("ㅎㅇ guys??\n");
