@@ -1,1 +1,0 @@
-# Codes for BAEKJOON and PROGRAMMERS.
