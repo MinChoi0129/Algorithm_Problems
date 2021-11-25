@@ -1,25 +1,37 @@
+import sys
+input = lambda : sys.stdin.readline().rstrip()
+
+def getTranslatableCount(word):
+    word = list(word)
+    first_end = word[0] + word[-1]
+    middle_word = ''.join(sorted(word[1:-1]))
+    return dictionary[first_end + middle_word]
+
+n = int(input())
 dictionary = dict()
-for _ in range(int(input())):
+
+for _ in range(n):
     word = list(input())
-    add_target = ()
+    key = ""
     if len(word) <= 2:
-        add_target = (word, dict())
+        key = word
     else:        
         first_end = word[0] + word[-1]
-        middle_word = word[1:-1]
-        tmp = dict()
-        for char in middle_word:
-            if char not in tmp: tmp[char] = 1
-            else: tmp[char] += 1
-        add_target = (middle_word, tmp)
+        middle_word = ''.join(sorted(word[1:-1]))
+        key = first_end + middle_word
     
-    if add_target not in dictionary: dictionary[add_target] = 1
-    else: dictionary[add_target] += 1
-
-print(dictionary)
+    if key not in dictionary: dictionary[key] = 1
+    else: dictionary[key] += 1
         
-
 for _ in range(int(input())):
-    sentence = input().split()
-    result = 1
-    
+    if n == 0:
+        print(0)
+    else:
+        sentence = input().split()
+        result = 1
+        for word in sentence:
+            if len(word) <= 2:
+                result *= 1
+            else:
+                result *= getTranslatableCount(word)
+        print(result)
