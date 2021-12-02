@@ -1,6 +1,6 @@
 import os
-followerFILE = open("follower.txt", mode = "r",  encoding="utf-8")
-followingFILE = open("tst.txt", mode = "r",  encoding="utf-8")
+followerFILE = open("C:\\Users\\leemi\\source\\repos\\MinChoi0129\\Coding-Example\\Python_ETC\\follower.txt", mode = "r",  encoding="utf-8")
+followingFILE = open("C:\\Users\\leemi\\source\\repos\\MinChoi0129\\Coding-Example\\Python_ETC\\tst.txt", mode = "r",  encoding="utf-8")
 follower, following, j = [], [], 0
 os.system("cls")
 for i in followerFILE:
@@ -26,7 +26,7 @@ for human in follower:
 # print("팔로워 수: ", len(follower))
 # print("팔로잉 수: ", len(following))
 
-# print("\n내가 팔로우 하지만 상대는 안하는 경우  : ")
+# print("\\n내가 팔로우 하지만 상대는 안하는 경우  : ")
 # for i in following:
 #     if i not in follower:
 #         print("%25s" %(i), end = " | ")
@@ -36,7 +36,7 @@ for human in follower:
 #             j =  0
 
 # j = 0
-# print("\n나는 팔로우 안하지만 상대가 하는 경우  : ")
+# print("\\n나는 팔로우 안하지만 상대가 하는 경우  : ")
 # for  i in follower:
 #     if i not in following:
 #         print("%25s" %(i), end = " | ")
