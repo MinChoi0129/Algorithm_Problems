@@ -21,7 +21,7 @@ mongoose.connect(config.mongoURI)
 
 
 app.get('/', (req, res) => {
-    res.send("연등")
+    res.send("NodeJS 학습중<br><br>1234test")
 })
 
 app.post('/register', (req, res) => {
@@ -33,39 +33,39 @@ app.post('/register', (req, res) => {
     })
 })
 
-// app.post('/login', (req, res) => {
-//     // 요청 이메일이 DB에 있는지 확인
-//     User.findOne({ email: req.body.email }, (err, user) => {
-//         if (!user) {
-//             return res.json({
-//                 loginSuccess: false,
-//                 message: "해당 이메일을 가진 사용자가 없습니다."
-//             })
-//         }
+app.post('/login', (req, res) => {
+    // 요청 이메일이 DB에 있는지 확인
+    User.findOne({ email: req.body.email }, (err, user) => {
+        if (!user) {
+            return res.json({
+                loginSuccess: false,
+                message: "해당 이메일을 가진 사용자가 없습니다."
+            })
+        }
 
-//         // 해당 이메일이 DB에 있는 경우 -> 비밀번호 확인
-//         user.comparePassword(req.body.password, (err, isMatch) => {
-//             if (!isMatch) {
-//                 return res.json({
-//                     loginSuccess: false, 
-//                     message: "올바른 비밀번호가 아닙니다."
-//                 })
-//             }
+        // 해당 이메일이 DB에 있는 경우 -> 비밀번호 확인
+        user.comparePassword(req.body.password, (err, isMatch) => {
+            if (!isMatch) {
+                return res.json({
+                    loginSuccess: false, 
+                    message: "올바른 비밀번호가 아닙니다."
+                })
+            }
             
-//             // 이메일이 존재하며 비밀번호도 일치하는 경우 토큰 생성
-//             user.generateToken((err, user) => {
-//                 if (err) {
-//                     return res.status(400).send(err)
-//                 }
-//                 res.cookie("test_cookie", user.token)
-//                     .status(200)
-//                     .json({ 
-//                     loginSuccess: true,
-//                     userId: user._id
-//                 })
-//             })
-//         })
-//     })
-// })
+            // 이메일이 존재하며 비밀번호도 일치하는 경우 토큰 생성
+            user.generateToken((err, user) => {
+                if (err) {
+                    return res.status(400).send(err)
+                }
+                res.cookie("test_cookie", user.token)
+                    .status(200)
+                    .json({ 
+                        loginSuccess: true,
+                        userId: user._id
+                    })
+            })
+        })
+    })
+})
 
 app.listen(port, () => console.log(`App is online on port ${port}!`))
