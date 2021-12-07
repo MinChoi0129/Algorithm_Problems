@@ -20,6 +20,7 @@ mongoose.connect(config.mongoURI)
     .catch(err => console.log(err))
 
 
+    
 app.get('/', (req, res) => {
     res.send("NodeJS 학습중<br><br>1234test")
 })
