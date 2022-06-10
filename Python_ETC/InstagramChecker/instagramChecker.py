@@ -47,7 +47,7 @@ class InstagramChecker:
         printCounter = 0
         for person in one:
             if person not in other:
-                print("%30s" % person.strip(), end = " | ")
+                print("%20s" % person.strip(), end = " | ")
                 printCounter += 1
                 if printCounter == 5: printCounter = 0; print()
         print(); print()
