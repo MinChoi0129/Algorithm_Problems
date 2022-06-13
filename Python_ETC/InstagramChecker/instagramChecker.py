@@ -1,4 +1,4 @@
-import os
+import os, datetime
 
 class InstagramChecker:
 
@@ -61,6 +61,36 @@ class InstagramChecker:
         self.followEachOtherPrinter(self.followings, self.followers)
         print("[%s]님을 팔로우 하지만 [%s]님께선 팔로우하지 않는 케이스입니다." % (self.name, self.name))
         self.followEachOtherPrinter(self.followers, self.followings)
+        
+    def showBiFollowingPrinter(self):
+        nowBiFollowings = set(self.followers) & set(self.followings)
+        print("현재 맞팔 수 : " + str(len(nowBiFollowings)) + "명")
+        oldBiFollowings = set()
+        for line in open("biFollowingsDB.txt", mode = "r",  encoding="utf-8"):
+            if line[:6] == 'APPEND': oldBiFollowings = set()
+            else: oldBiFollowings.add(line.strip())
+        
+        f = open("biFollowingsDB.txt", mode = "a",  encoding="utf-8")
+        f.write("APPEND " + datetime.datetime.today().strftime('%Y-%m-%d %H:%M:%S') + "\n")
+        for user in nowBiFollowings:
+            f.write(user + '\n')
+            
+        result = set(oldBiFollowings) - set(nowBiFollowings)
+        if not result:
+            print("팔먹튀가 없습니다.")
+        else:
+            print("팔먹튀 목록 : ")
+            printCounter = 0
+            for user in result:
+                print("%20s" % user, end = " | ")
+                printCounter += 1
+                if printCounter == 5: printCounter = 0; print()
+            
+            
+            
+        
 
 user = InstagramChecker()
-if user.name: user.showInstagramUsersInfo()
+if user.name:
+    user.showInstagramUsersInfo()
+    user.showBiFollowingPrinter()
