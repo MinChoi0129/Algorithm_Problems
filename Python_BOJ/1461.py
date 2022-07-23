@@ -1,8 +1,8 @@
 from collections import deque
 
 negatives, positives, grouped_negatives, grouped_positives = [], [], deque(), deque()
-
 n, m = map(int, input().split())
+
 for num in map(int, input().split()):
     if num < 0: negatives.append(num)
     else: positives.append(num)
