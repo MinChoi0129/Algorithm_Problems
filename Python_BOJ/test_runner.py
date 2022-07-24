@@ -10,11 +10,13 @@ def test():
             answer_f = open("E:/Downloads/tests/tests/kickdown/tests/" + str(i) + str(j) + '.a', 'r')
             
             inputs = problem_f.readlines()
-            line_a, line_b = list(inputs[0].rstrip()), list(inputs[1].rstrip())
-            answer = answer_f.readline()
-
+            answer = int(answer_f.readline().rstrip())
             
-            main.main((line_a, line_b), answer)
+            line_a, line_b = list(inputs[0].rstrip()), list(inputs[1].rstrip())
+            
+            my_answer = main.main((line_a, line_b))
+            if my_answer != answer: print("FAILED", my_answer, answer)
+            else: print("OK")
             
             problem_f.close()
             answer_f.close()
