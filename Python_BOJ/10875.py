@@ -1,6 +1,25 @@
 def ccw(p1, p2, p3):
     s = (p1[0] * p2[1] + p2[0] * p3[1] + p3[0] * p1[1]) - (p1[1] * p2[0] + p2[1] * p3[0] + p3[1] * p1[0])
     return 1 if s > 0 else (0 if s == 0 else -1)
+
+def isRightVerticalShape(p1, p2, p3, p4, vector):
+    if p1[0] == p3[0] == p4[0]:
+        if p1[1] == p3[1] and vector == '-': return [True, p2[0] - p1[0]]
+        elif p1[1] == p4[1] and vector == '-': return [True, p2[0] - p1[0]]
+        
+    elif p2[0] == p3[0] == p4[0]:
+        if p2[1] == p3[1] and vector == '+': return [True, p2[0] - p1[0]]
+        elif p2[1] == p4[1] and vector == '+': return [True, p2[0] - p1[0]]
+            
+    elif p1[0] == p2[0] == p3[0]:
+        if p3[1] == p1[1] and vector == '-': return [True, p2[1] - p1[1]]
+        elif p3[1] == p2[1] and vector == '+': return [True, p2[1] - p1[1]]
+            
+    elif p1[0] == p2[0] == p4[0]:
+        if p4[1] == p1[1] and vector == '-': return [True, p2[1] - p1[1]]
+        elif p4[1] == p2[1] and vector == '+': return [True, p2[1] - p1[1]]
+            
+    return [False, None]
     
 class Line:
     def __init__(self, p1, p2, size, vector):
@@ -18,51 +37,47 @@ class Line:
         elif not (-L <=  self.right_up[1]  <= L): return [True, L + 1 - self.left_down[1]]   
         return [False, None]
     
+    
+        
     def isCrossingOtherLine(self, other_line): # 두 선분의 충돌 여부
         
         # 반드시 현재 생각하고 있는 선분이 self(p1, p2), 기존에 있던 선분은 other_line(p3, p4)
         p1, p2, p3, p4 = self.left_down, self.right_up, other_line.left_down, other_line.right_up
         
-        if p1 in [p3, p4]: # 직각으로 만남. 'ㄴ' 'ㄱ' 모양
-            if self.vector == '+': return [True, 0]  # 현재 그리려고 하는 선분을 우측이나 위로 방향성을 갖게 그린다면,
-            else: return [True, p2[1] - p1[1]]  # 현재 그리려고 하는 선분을 좌측이나 아래로 방향성을 갖게 그린다면,
-        elif p2 in [p3, p4]:
-            if self.vector == '+': return [True, p2[1] - p1[1]]
-            else: return [True, 0]
+        result = isRightVerticalShape(p1, p2, p3, p4, self.vector)
+        if result[0]: return [True, result[1]]
         
-        # ccw 활용한 판단.
-        p1p2 = ccw(p1, p2, p3) * ccw(p1, p2, p4)
-        p3p4 = ccw(p3, p4, p1) * ccw(p3, p4, p2)
+        calc1 = ccw(p1, p2, p3) * ccw(p1, p2, p4)
+        calc2 = ccw(p3, p4, p1) * ccw(p3, p4, p2)
         
-        if p1p2 == 0 and p3p4 == 0: # 네 점이 일직선 위에 있는 경우
-            result = (p3 <= p2 and p1 <= p4) # 두 선분이 겹치는지.
-            if result: # 겹치는 경우
-                option = 0 if p1[1] == p2[1] else 1 # option : 세로(1)로 겹치는지, 가로(0)로 겹치는지
+        if calc1 <=0 and calc2 <= 0: # 상당수 케이스에 교점이 존재함. 4개의 점이 일직선 위에 있음.
+            if calc1 == 0 and calc2 == 0: # 단, 이 케이스 중 일부는 제외
+                vtc_or_hrz = 1 if p1[0] == p2[0] else 0
                 
-                # 현재 그리려고 하는 선분을 우측이나 위로 방향성을 갖게 그린다면,
-                if self.vector == '+': 
-                    if p1[option] < p4[option] < p2[option]:
-                        if p1[option] < p3[option]: return [True, p3[option] - p1[option]] # 선분 속 선분(p1 p3 p4 p2)
-                        else: return [True, 0] # 일부만 겹침 (p3 p1 p4 p2)
-                    else:  
-                        if p3[option] < p1[option]: return [True, 0] # 선분 속 선분 (p3 p1 p2 p4)
-                        else: return [True, p3[option] - p1[option]] # 일부만 겹침 (p1 p3 p2 p4)
-                        
-                # 현재 그리려고 하는 선분을 좌측이나 아래로 방향성을 갖게 그린다면,
-                else: return [True, p2[option] - p4[option]] if p1[option] < p4[option] < p2[option] else [True, 0]
+                # 교점 없음(ㅡ ㅡ)
+                if p1 < p2 < p3 < p4 or p3 < p4 < p1 < p2: return [False, None]
+                
+                # 한점에서 만남(ㅡ.ㅡ)
+                elif p2 == p3 and self.vector == '+': return [True, p2[vtc_or_hrz] - p1[vtc_or_hrz]]
+                elif p4 == p1 and self.vector == '-': return [True, p2[vtc_or_hrz] - p1[vtc_or_hrz]]
+                
+                # 일부 겹침(__====--)
+                elif p1 < p3 < p2 < p4 and self.vector == '+': return [True, p3[vtc_or_hrz] - p1[vtc_or_hrz]]
+                elif p3 < p1 < p4 < p2 and self.vector == '-': return [True, p2[vtc_or_hrz] - p4[vtc_or_hrz]]
                     
-        else: # 수직으로 교차
-            result = p1p2 <= 0 and p3p4 <= 0
-            if result:
-                if p1[1] == p2[1]:
-                    if self.vector == '+': return [True, p3[0] - p1[0]]
-                    else: return [True, p2[0] - p3[0]]
-                else:
-                    if self.vector == '+': return [True, p3[1] - p1[1]]
-                    else: return [True, p2[1] - p3[1]]
-        
-        return [False, None] # 완벽한 선분.
-        
+                # 선분 속 선분 (ㅡ_ㅡ)
+                elif p1 <= p3 < p4 <= p2 and self.vector == '+': return [True, p3[vtc_or_hrz] - p1[vtc_or_hrz]]
+                elif p1 <= p3 < p4 <= p2 and self.vector == '-': return [True, p2[vtc_or_hrz] - p4[vtc_or_hrz]]
+
+            else: # 교점 무조건 존재함.(+, ㄴ, ㅓ)
+                if p1[1] == p2[1] and p3[1] <= p1[1] <= p4[1]:
+                    return [True, p3[0] - p1[0]] if self.vector == '+' else [True, p2[0] - p3[0]]
+                elif p3[1] == p4[1] and p1[1] <= p3[1] <= p2[1]:
+                    return [True, p3[1] - p1[1]] if self.vector == '+' else [True, p2[1] - p3[1]]
+                
+        else: # 양수, 교점없음.
+            return [False, None]
+
     def isCrossingOrOutOfBoundary(self, other_line, L): # return [BooleanOfAppendability, timeUntilFalse]
         # 충돌판단 먼저하고, 나중에 영역판단. 
         result = self.isCrossingOtherLine(other_line)
@@ -73,8 +88,7 @@ def main():
     # 기본방향, Line객체모음, 뱀사망여부, L, 현위치, N
 
     if N == 0: # 직진만 하고 사망.
-        print(L + 1)
-        return
+        print(L + 1); return
 
     for dt, next_direction in [input().split() for _ in range(N)]:
         if isSnakeDead: break
@@ -92,7 +106,7 @@ def main():
         new_line = Line(p1, p2, int(dt), vector) # 객체생성, new_line: 새로 그리고싶은 선분
         
         if len(lines) >= 3: # 최근 두개의 선분(뱀의 머리 뒷 두군데 == 뱀의 목 부분 쯤) 은 충돌안하므로 3개이상 쌓였을때 새 선분과 비교가능
-            closest_distance_to_first_crossing_line = L * L # 현위치에서 제일 먼저 충돌하는 선분까지의 거리(적절히 큰 숫자로 초기화)
+            closest_distance_to_first_crossing_line = (L+1) ** 2 # 현위치에서 제일 먼저 충돌하는 선분까지의 거리(적절히 큰 숫자로 초기화)
             
             for old_line in lines[:-2]: # 최근 두개의 선분(뱀의 머리 뒷 두군데 == 뱀의 목 부분 쯤) 은 충돌안함.
                 result = new_line.isCrossingOrOutOfBoundary(old_line, L) # result = [충돌여부, 충돌점까지의 거리]
@@ -102,7 +116,7 @@ def main():
                         closest_distance_to_first_crossing_line = result[1] # 제일 먼저 충돌하는 선분까지의 거리로 최솟값 탐색.
                     
             # 최댓값이 변경되었다면, 선분을 다 그리는 것이 아니라 첫 충돌하는 선분까지의 거리로 업데이트.
-            if closest_distance_to_first_crossing_line < L * L:
+            if closest_distance_to_first_crossing_line < (L+1) ** 2:
                 new_line.size = closest_distance_to_first_crossing_line 
             
         else:
@@ -134,7 +148,7 @@ def main():
         new_line = Line(p1, p2, size, vector) # 한 점이 보드 바깥쪽에.
         
         if len(lines) >= 3:
-            closest_distance_to_first_crossing_line = L * L
+            closest_distance_to_first_crossing_line = (L+1) ** 2
             for old_line in lines[:-2]:
                 result = new_line.isCrossingOrOutOfBoundary(old_line, L)
                 if result[0]:
@@ -142,7 +156,7 @@ def main():
                     if result[1] < closest_distance_to_first_crossing_line:
                         closest_distance_to_first_crossing_line = result[1]
 
-            if closest_distance_to_first_crossing_line < L * L:
+            if closest_distance_to_first_crossing_line < (L+1) ** 2:
                 new_line.size = closest_distance_to_first_crossing_line
         else:
             is_out_of_boundary = new_line.isOutOfBoundary(L)
