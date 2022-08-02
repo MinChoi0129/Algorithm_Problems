@@ -1,8 +1,9 @@
 import os
-followerFILE = open("C:\\Users\\leemi\\source\\repos\\MinChoi0129\\Coding-Example\\Python_ETC\\follower.txt", mode = "r",  encoding="utf-8")
-followingFILE = open("C:\\Users\\leemi\\source\\repos\\MinChoi0129\\Coding-Example\\Python_ETC\\tst.txt", mode = "r",  encoding="utf-8")
+followerFILE = open("C:/Users/leemi/Documents/GitHub/Coding-Example/Python_ETC/follower.txt", mode = "r",  encoding="utf-8")
+followingFILE = open("C:/Users/leemi/Documents/GitHub/Coding-Example/Python_ETC/tst.txt", mode = "r",  encoding="utf-8")
 follower, following, j = [], [], 0
 os.system("cls")
+
 for i in followerFILE:
     if "님의 프로필 사진" in i:
         follower.append(i[:-10])
@@ -14,6 +15,7 @@ for i in followingFILE:
 for human in follower:
     if human not in following:
         print(human)
+
 # len_of_longest_letter = 0
 # for i in follower:
 #     if len(i) > len_of_longest_letter:
