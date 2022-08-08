@@ -1,25 +1,21 @@
-import heapq
-
+import heapq, sys
+input = lambda : sys.stdin.readline().rstrip()
 for _ in range(int(input())): # T
-    Q_max = []
-    Q_min = []
-    for _ in range(int(input())): # K
+    Q_max, Q_min, had_been_deleted = [], [], dict()
+    for i in range(int(input())): # K
         command = input().split()
         op, num = command[0], int(command[1])
-        if op == 'D':
-            if not Q_max:
-                continue            
-            if num == 1: # 최댓값 삭제
-                heapq.heappop(Q_max) # O(log(n))
-                Q_min = []
-                for num in Q_max: heapq.heappush(Q_min, -num)
-            elif num == -1: # 최솟값 각제
-                heapq.heappop(Q_min) # O(log(n))
-                Q_max = []
-                for num in Q_min: heapq.heappush(Q_max, -num)
-        elif op == 'I':
-            heapq.heappush(Q_max, -num) # O(nlog(n))
-            heapq.heappush(Q_min, num) # O(nlog(n))
+        if op == 'I':
+            heapq.heappush(Q_max, (-num, i))
+            heapq.heappush(Q_min, (num, i))
+            had_been_deleted[i] = False
+        else:
+            target_Q = Q_min if num == -1 else Q_max
+            while target_Q and had_been_deleted[target_Q[0][1]]: heapq.heappop(target_Q)
+            if target_Q: had_been_deleted[target_Q[0][1]] = True; heapq.heappop(target_Q)
 
-    if Q_max: print(-Q_max[0], Q_min[0])   
+    for Q in [Q_max, Q_min]:
+        while Q and had_been_deleted[Q[0][1]]: heapq.heappop(Q)
+
+    if Q_max: print(-Q_max[0][0], Q_min[0][0])   
     else: print("EMPTY")
