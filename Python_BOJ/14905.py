@@ -1,28 +1,21 @@
-def getFourPrimesForNum(num):
-    global primes
+def getFourPrimesForNum(n): # 8 이상의 자연수
+    ans, n = (['2', '3'], n-5) if n%2 == 1 else (['2', '2'], n-4)
+    for i in range(2, size+1):
+        if is_primes[i] and is_primes[n-i]: return ' '.join(ans + [str(i), str(n-i)])
 
-    num -= 4
-    if num % 2 == 0: # 4 + 짝 or 5 + 홀, 에서 아무조합이나 가능
-        if num == 4: return "2 2 2 2"
-        else:
-            size = len(primes)
-            for i in range(size):
-                for j in range(i, size):
-                    if primes[i] + primes[j] == num:
-                        return "2 2 " + str(primes[i]) + " " + str(primes[j])
-
-    else: # 4 + 홀
-        num -= 2
-        return "2 2 2 " + str(num)
-
-is_primes = [False, False] + [True] * 100000000
-for i in range(2, len(is_primes)):
-    for j in range(i+i, len(is_primes), i):
-        is_primes[j] = False
-        
+ns = []
 while True:
-    try:
-        num = int(input())
-        if num < 8: print("Impossible.")
-        print(getFourPrimesForNum(num))
+    try: ns.append(int(input()))
     except: break
+    
+is_primes = [False, False]+[True]*(max(ns) - 1)
+size = int(len(is_primes)**0.5)+1
+
+for i in range(2, size):
+    if is_primes[i]:
+        for j in range(i+i, len(is_primes), i):
+            is_primes[j] = False
+        
+for n in ns:
+    if n < 8: print("Impossible.")
+    else: print(getFourPrimesForNum(n))
