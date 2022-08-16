@@ -6,7 +6,7 @@ def calculateDistanceOfTwoNodes(home_node, target_node):
     for now_node, distance in node_connections[home_node]:
         if not node_visited[now_node]:
             result = calculateDistanceOfTwoNodes(now_node, target_node)
-            if result != 0: total_distance += result + distance
+            if result: total_distance += result + distance
             
     return total_distance
 
