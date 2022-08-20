@@ -13,8 +13,8 @@ for _ in range(m):
 start_node, end_node = map(int, input().split())
 min_distance_to_node[start_node] = 0
 
-while not visited[end_node]:
-    heapq_list = [[value, idx] for idx, value in enumerate(min_distance_to_node) if not visited[idx]]
+while visited.count(True) < n:
+    heapq_list = [[value, idx] for idx, value in enumerate(min_distance_to_node) if visited[idx] == False]
     heapq.heapify(heapq_list)
     present_idx = heapq_list[0][1]
 
