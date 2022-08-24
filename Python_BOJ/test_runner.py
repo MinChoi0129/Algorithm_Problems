@@ -8,6 +8,6 @@ for problem in problems:
             pass
     except:
         print("ERROR", problem)
-        # os.system("start https://www.acmicpc.net/problem/" + problem)
-        count += 1
-print(count)
+        os.system("start https://www.acmicpc.net/problem/" + problem)
+        # count += 1
+# print(count)
