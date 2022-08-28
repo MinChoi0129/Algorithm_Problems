@@ -1,3 +1,6 @@
+import sys
+sys.setrecursionlimit(10000000)
+
 def isProperCoordinate(x, y): return 0 <= x < h and 0 <= y < w and ocean_map[x][y] == 1 and not visited[x][y]
 
 def dfs(x, y):
