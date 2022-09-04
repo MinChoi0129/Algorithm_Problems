@@ -1,11 +1,11 @@
 small, big = map(int, input().split())
-is_square_number = [False] * (big-small)
-for num in range(2, big):
-    chekcing_number = num ** 2
-    if chekcing_number-small > big: break
-    is_square_number[chekcing_number-small] = True
-    for multiplier in range(2, big):
-        multiplied_checking_number = chekcing_number * multiplier
-        if multiplied_checking_number-small > big: break
-        is_square_number[multiplied_checking_number-small] = True
-print(is_square_number.count(False)-1)
+size = big - small + 1
+is_square_number = [False] * size
+
+for num in range(2, int(big ** 0.5) + 1):
+    square_num = num ** 2
+    start_num = square_num * (1 + ((small-1) // square_num))
+    for multiplied_square_num in range(start_num, big + 1, square_num):
+        is_square_number[multiplied_square_num - small] = True
+
+print(is_square_number.count(False))
