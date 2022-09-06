@@ -6,4 +6,3 @@ for i in b:
     print(i, end = ": ")
     for j in a:
         print("%5d" % (i*j), end = " ")
-    print()
