@@ -1,41 +1,33 @@
-import sys
+import sys, random, collections
 input = lambda : sys.stdin.readline().rstrip()
 
-def getDistance(from_node, to_node):
-    if distance_table[from_node][to_node] != None: return distance_table[from_node][to_node]
+def bfs(start_node, v):
+    # distances : None이면 방문한 적 없음.
+    # 0을 포함한 자연수이면 방문한 것임.
+    # 그 값은 시작노드에서 해당 노드까지의 거리를 의미함.
+    distances = [None] * (v+1); distances[start_node] = 0
 
-    dist = 0
-    for connection in connections[from_node]:
-        if connection[0] == to_node: 
-            return connection[1]
-        else: dist += getDistance(connection[0], to_node)
+    # 시작노드에서 최장거리가 되는 노드까지의 거리 및 그 노드의 번호.
+    max_distance, node_for_max_distance = 0, None
 
-    distance_table[from_node][to_node] = dist
-    distance_table[to_node][from_node] = dist
+    Q = collections.deque([start_node])
+    while Q:
+        current_node = Q.popleft()
+        for new_node, new_distance in connections[current_node]:
+            if distances[new_node] == None:
+                distances[new_node] = distances[current_node] + new_distance
+                if max_distance < distances[new_node]:
+                    max_distance = distances[new_node]
+                    node_for_max_distance = new_node
+                Q.append(new_node)
 
-    return dist
+    return max_distance, node_for_max_distance
 
 v = int(input())
-connections = {i: [] for i in range(1, v + 1)}
-distance_table = [[None] * (v+1) for _ in range(v+1)]
-for i in range(v): distance_table[i][i] = 0
-
+connections = {i: [] for i in range(1, v+1)}
 for _ in range(v):
     data = [*map(int, input().split())]
-    from_node, connection_pairs = data[0], data[1:-1]
+    from_node, pairs = data[0], data[1:-1]
+    for i in range(0, len(pairs), 2):connections[from_node].append([pairs[i], pairs[i+1]])
 
-    tmp_connection = []
-    for i in range(len(connection_pairs)):
-        if i % 2 == 0: tmp_connection.append(connection_pairs[i])
-        else:
-            tmp_connection.append(connection_pairs[i])
-            distance_table[from_node][tmp_connection[0]] = tmp_connection[1]
-            distance_table[tmp_connection[0]][from_node] = tmp_connection[1]
-            connections[from_node].append(tmp_connection)
-            tmp_connection = []
-
-for from_node in range(1, v):
-    for to_node in range(from_node + 1, v + 1):
-        distance = getDistance(from_node, to_node)
-        distance_table[from_node][to_node] = distance
-        distance_table[to_node][from_node] = distance
+print(bfs(bfs(random.randint(1, v), v)[1], v)[0])
