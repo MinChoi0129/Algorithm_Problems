@@ -10,7 +10,7 @@ class Matrix:
         c = self ** (n//2)
         if not n % 2: return c*c
         else: return c*c*self
-    
+
 n, p = int(input()), 1000000007
 if not n: print(0)
 else: print(Matrix([[1, 1], [1, 0]]) ** n)
