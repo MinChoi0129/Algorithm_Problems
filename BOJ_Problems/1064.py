@@ -1,4 +1,9 @@
 Xa, Ya, Xb, Yb, Xc, Yc = map(int, input().split())
 
-# 한 직선위에 있다 -> 3C2 cases의 기울기가 같다. -> 나눗셈 없애도록 ab=cd
-# 기울기 발산 고려.
+if (Xa*Yb + Xb*Yc +Xc*Ya - Xb*Ya - Xc*Yb - Xa*Yc) == 0:
+    print(-1)
+else:
+    l1 = 2 * ((( (Xc-Xa) ** 2 + (Yc-Ya) ** 2 ) ** 0.5) + (( (Xb-Xa) ** 2 + (Yb-Ya) ** 2 ) ** 0.5))
+    l2 = 2 * ((( (Xc-Xb) ** 2 + (Yc-Yb) ** 2 ) ** 0.5) + (( (Xb-Xa) ** 2 + (Yb-Ya) ** 2 ) ** 0.5))
+    l3 = 2 * ((( (Xc-Xa) ** 2 + (Yc-Ya) ** 2 ) ** 0.5) + (( (Xc-Xb) ** 2 + (Yc-Yb) ** 2 ) ** 0.5))
+    print(max(l1, l2, l3) - min(l1, l2, l3))
