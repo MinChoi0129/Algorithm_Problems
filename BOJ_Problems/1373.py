@@ -1,0 +1,1 @@
+print(oct(int('0b'+input(), base=0))[2:])
