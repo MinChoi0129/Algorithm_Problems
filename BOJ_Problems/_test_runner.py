@@ -1,2 +1,4 @@
-solution = __import__("17387")
-result = solution.main()
+a = lambda x : int(x)*2
+
+b = [*map(a, input().split())]
+print(b)
