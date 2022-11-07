@@ -3,11 +3,12 @@ from collections import deque
 def getDividedStatementDeque() -> deque:
     statement = deque()
     current_string = ""
-
+    opcount = 0
     for e in input():
         if e in '0123456789':
             current_string += e
         else:
+            opcount += 1
             if current_string:
                 statement.append(current_string)
                 current_string = ""
@@ -15,69 +16,44 @@ def getDividedStatementDeque() -> deque:
     if current_string: statement.append(current_string)
 
     if statement[0] == '-':
+        opcount -= 1
         pop = statement.popleft()
         statement[0] = pop + statement[0]
 
-    for i in range(len(statement)):
-        try: statement[i] = int(statement[i])
-        except: continue
+    return statement, opcount
 
-    return statement
+def priority(op):
+    return 1 if op in '*/' else 0
 
-def priority(op): return 1 if op in '*/' else 0
+def calculate(command):
+    left, op, right = int(command[0]), command[1], int(command[2])
+    if op == '+': return left + right
+    elif op == '-': return left - right
+    elif op == '*': return left * right
+    elif left * right < 0: return left // right + 1
+    else: return left // right
 
-statement = getDividedStatementDeque()
+s, opcount = getDividedStatementDeque()
 
-while '*' in statement or '/' in statement or '+' in statement or '-' in statement:
-    left, right = [], []
-    for i in range(3): left.append(statement[i])
-    for i in range(3): right.append(statement[len(statement)-1-i])
+while opcount:
+    left, right = [s[0], s[1], s[2]], [s[-3], s[-2], s[-1]]
 
     p_left, p_right = priority(left[1]), priority(right[1])
+    calc_left, calc_right = calculate(left), calculate(right)
+
     if p_left == p_right: # 우선순위 같음
-        if left[1] == '*': calc_left = left[0] * left[2]
-        elif left[1] == '/':
-            if left[0] * left[2] < 0: calc_left = left[0] // left[2] + 1
-            else: calc_left = left[0] // left[2]
-        elif left[1] == '+': calc_left = left[0] + left[2]
-        elif left[1] == '-': calc_left = left[0] - left[2]
-
-        if right[1] == '*': calc_right = right[2] * right[0]
-        elif right[1] == '/':
-            if right[0] * right[2] < 0: calc_right = right[2] // right[0] + 1
-            else: calc_right = right[2] // right[0]
-        elif right[1] == '+': calc_right = right[2] + right[0]
-        elif right[1] == '-': calc_right = right[2] - right[0]
-        
         if calc_left >= calc_right:
-            for i in range(3): statement.popleft()
-            statement.appendleft(calc_left)
+            for i in range(2): s.popleft()
+            s[0] = calc_left
         else:
-            for i in range(3): statement.pop()
-            statement.append(calc_right)
+            for i in range(2): s.pop()
+            s[-1] = calc_right
     elif p_left > p_right:
-        if left[1] == '*':
-            calc_left = left[0] * left[2]
-        elif left[1] == '/':
-            if left[0] * left[2] < 0: calc_left = left[0] // left[2] + 1
-            else: calc_left = left[0] // left[2]
-        elif left[1] == '+':
-            calc_left = left[0] + left[2]
-        elif left[1] == '-':
-            calc_left = left[0] - left[2]
-        for i in range(3): statement.popleft()
-        statement.appendleft(calc_left)
-    elif p_left < p_right:
-        if right[1] == '*':
-            calc_right = right[2] * right[0]
-        elif right[1] == '/':
-            if right[0] * right[2] < 0: calc_right = right[2] // right[0] + 1
-            else: calc_right = right[2] // right[0]
-        elif right[1] == '+':
-            calc_right = right[2] + right[0]
-        elif right[1] == '-':
-            calc_right = right[2] - right[0]
-        for i in range(3): statement.pop()
-        statement.append(calc_right)
+        for i in range(2): s.popleft()
+        s[0] = calc_left
+    else:
+        for i in range(2): s.pop()
+        s[-1] = calc_right
+    opcount -= 1
 
-print(statement[0])
+print(int(s[0]))
