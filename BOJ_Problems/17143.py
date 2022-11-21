@@ -15,9 +15,8 @@ class Shark:
         if self.direction == 1:
             if required_move_times > self.x:
                 required_move_times -= self.x
-                self.x = 0
-                direction_set = required_move_times // r
-                leftover_set = required_move_times % (r-1)
+                direction_set = required_move_times // r # 몫
+                leftover_set = (required_move_times % r) + 1 # 나머지
 
                 if direction_set % 2 == 0:
                     self.direction = 2
@@ -33,7 +32,7 @@ class Shark:
                 required_move_times -= (r-1) - self.x
                 self.x = r-1
                 direction_set = required_move_times // r
-                leftover_set = required_move_times % (r-1)
+                leftover_set = ((required_move_times % r) + 1) % (r-1)
 
                 if direction_set % 2 == 0:
                     self.direction = 1
@@ -49,7 +48,7 @@ class Shark:
                 required_move_times -= (c-1) - self.y
                 self.y = c-1
                 direction_set = required_move_times // c
-                leftover_set = required_move_times % (c-1)
+                leftover_set = ((required_move_times % c) + 1) % (c-1)
 
                 if direction_set % 2 == 0:
                     self.direction = 4
@@ -65,7 +64,7 @@ class Shark:
                 required_move_times -= self.y
                 self.y = 0
                 direction_set = required_move_times // c
-                leftover_set = required_move_times % (c-1)
+                leftover_set = ((required_move_times % c) + 1) % (c-1)
 
                 if direction_set % 2 == 0:
                     self.direction = 3
@@ -74,7 +73,7 @@ class Shark:
                     self.y = c-1
                     self.y -= leftover_set
             else:
-                self.y -= required_move_times       
+                self.y -= required_move_times
 
         self.moved = True
         fishing_ground[self.x][self.y].append(self)
@@ -114,12 +113,13 @@ for _ in range(c):
     for x in range(r):
         for y in range(c):
             if fishing_ground[x][y]:
+                fishing_ground[x][y][0].moved = False
+            if len(fishing_ground[x][y]) >= 2:
                 largest_shark_idx, largest_shark_size = None, 0
                 for idx, shark in enumerate(fishing_ground[x][y]):
                     if shark.size > largest_shark_size:
                         largest_shark_idx, largest_shark_size = idx, shark.size
                 fishing_ground[x][y] = deque([fishing_ground[x][y][largest_shark_idx]])
-                fishing_ground[x][y][0].moved = False
 
 print(fisher.bucket)
 
