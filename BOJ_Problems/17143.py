@@ -1,5 +1,6 @@
-import sys
 from collections import deque
+import sys
+input = lambda : sys.stdin.readline().rstrip()
 
 class Shark:
     def __init__(self, x, y, speed, direction, size):
@@ -9,117 +10,81 @@ class Shark:
         self.size = size
         self.moved = False
 
-    def move(self):
-        required_move_times = self.speed
-
-        if self.direction == 1:
-            if required_move_times > self.x:
-                required_move_times -= self.x
-                direction_set = required_move_times // r # 몫
-                leftover_set = (required_move_times % r) + 1 # 나머지
-
-                if direction_set % 2 == 0:
-                    self.direction = 2
-                    self.x += leftover_set
-                else:
-                    self.x = r-1
-                    self.x -= leftover_set
+    def move(self, fishing_ground, r, c):
+        d = self.direction
+        n, distance_to_move = r if d < 3 else c, self.speed
+        opposite_direction, distance_to_facing_end = None, None
+        if   d == 1: opposite_direction = 2; distance_to_facing_end = self.x
+        elif d == 2: opposite_direction = 1; distance_to_facing_end = (n-1) - self.x
+        elif d == 3: opposite_direction = 4; distance_to_facing_end = (n-1) - self.y
+        elif d == 4: opposite_direction = 3; distance_to_facing_end = self.y
+                    
+        if d < 3:
+            if distance_to_move <= distance_to_facing_end: self.x += distance_to_move * ((-1) ** d)
             else:
-                self.x -= required_move_times
+                distance_to_move -= distance_to_facing_end
+                self.x = 0 if d == 1 else n-1
+                if (distance_to_move // (n-1)) % 2 == 0:
+                    self.x += (distance_to_move % (n-1)) * ((-1) ** (d - 1))
+                    self.direction = opposite_direction
+                else: self.x = (n-1) - self.x + (distance_to_move % (n-1)) * ((-1) ** d)
         
-        elif self.direction == 2:
-            if required_move_times > (r-1) - self.x:
-                required_move_times -= (r-1) - self.x
-                self.x = r-1
-                direction_set = required_move_times // r
-                leftover_set = ((required_move_times % r) + 1) % (r-1)
-
-                if direction_set % 2 == 0:
-                    self.direction = 1
-                    self.x -= leftover_set
-                else:
-                    self.x = 0
-                    self.x += leftover_set
+        else:
+            if distance_to_move <= distance_to_facing_end: self.y += distance_to_move * ((-1) ** (d - 1))
             else:
-                self.x += required_move_times
-
-        elif self.direction == 3:
-            if required_move_times > (c-1) - self.y:
-                required_move_times -= (c-1) - self.y
-                self.y = c-1
-                direction_set = required_move_times // c
-                leftover_set = ((required_move_times % c) + 1) % (c-1)
-
-                if direction_set % 2 == 0:
-                    self.direction = 4
-                    self.y -= leftover_set
-                else:
-                    self.y = 0
-                    self.y += leftover_set
-            else:
-                self.y += required_move_times
-        
-        elif self.direction == 4:
-            if required_move_times > self.y:
-                required_move_times -= self.y
-                self.y = 0
-                direction_set = required_move_times // c
-                leftover_set = ((required_move_times % c) + 1) % (c-1)
-
-                if direction_set % 2 == 0:
-                    self.direction = 3
-                    self.y += leftover_set
-                else:
-                    self.y = c-1
-                    self.y -= leftover_set
-            else:
-                self.y -= required_move_times
+                distance_to_move -= distance_to_facing_end
+                self.y = n-1 if d == 3 else 0
+                if (distance_to_move // (n-1)) % 2 == 0:
+                    self.y += (distance_to_move % (n-1)) * ((-1) ** d)
+                    self.direction = opposite_direction
+                else: self.y = (n-1) - self.y + (distance_to_move % (n-1)) * ((-1) ** (d - 1))
 
         self.moved = True
         fishing_ground[self.x][self.y].append(self)
+    
+    @staticmethod
+    def moveAllSharks(fishing_ground, r, c):
+        for x in range(r):
+            for y in range(c):
+                element = fishing_ground[x][y]
+                if element and not element[0].moved:
+                    shark = element.popleft()
+                    shark.move(fishing_ground, r, c)
+    
+    @staticmethod
+    def setBiggestShark(fishing_ground, r, c):
+        for x in range(r):
+            for y in range(c):
+                if fishing_ground[x][y]:
+                    biggest_shark = max(fishing_ground[x][y], key=lambda obj: obj.size)
+                    biggest_shark.moved = False
+                    fishing_ground[x][y] = deque([biggest_shark])
 
 class Human:
     def __init__(self): self.bucket = 0; self.col = -1
     def move(self): self.col += 1
-    def catchCloestShark(self, r):
+    def catchCloestShark(self, fishing_ground, r, c):
         for x in range(r):
             if fishing_ground[x][self.col]:
                 self.bucket += fishing_ground[x][self.col][0].size
                 fishing_ground[x][self.col] = deque()
                 break
 
-def initializer():
-    input = lambda : sys.stdin.readline().rstrip()
+def main():
     r, c, m = map(int, input().split())
-    fishing_ground = [[deque() for y in range(c)] for x in range(r)]
+    fishing_ground = [[deque() for _ in range(c)] for _ in range(r)]
+
     for _ in range(m):
-        big_x, big_y, speed, direction, size = map(int, input().split())
-        fishing_ground[big_x-1][big_y-1] = deque([Shark(big_x-1, big_y-1, speed, direction, size)])
-    return r, c, m, fishing_ground
+        row, col, speed, direction, size = map(int, input().split())
+        fishing_ground[row-1][col-1] = deque([Shark(row-1, col-1, speed, direction, size)])
 
-r, c, m, fishing_ground = initializer()
-fisher = Human()
+    fisher = Human()
+    for _ in range(c):
+        fisher.move()
+        fisher.catchCloestShark(fishing_ground, r, c)
+        Shark.moveAllSharks(fishing_ground, r, c)
+        Shark.setBiggestShark(fishing_ground, r, c)
 
-for _ in range(c):
-    fisher.move()
-    fisher.catchCloestShark(r)
-    for x in range(r):
-        for y in range(c):
-            element = fishing_ground[x][y]
-            if element and not element[0].moved:
-                shark = element.popleft()
-                shark.move()
+    print(fisher.bucket)
 
-    for x in range(r):
-        for y in range(c):
-            if fishing_ground[x][y]:
-                fishing_ground[x][y][0].moved = False
-            if len(fishing_ground[x][y]) >= 2:
-                largest_shark_idx, largest_shark_size = None, 0
-                for idx, shark in enumerate(fishing_ground[x][y]):
-                    if shark.size > largest_shark_size:
-                        largest_shark_idx, largest_shark_size = idx, shark.size
-                fishing_ground[x][y] = deque([fishing_ground[x][y][largest_shark_idx]])
-
-print(fisher.bucket)
-
+main()
