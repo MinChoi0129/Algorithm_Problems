@@ -1,29 +1,17 @@
 from collections import deque
 
-def keyLoger(left : deque, right : deque, password : str):
+def keyLogger(left: deque, right: deque, password: list[str]) -> str:
     for cmd in password:
-        if cmd == '<':
-            try:
-                right.appendleft(left.pop())
-            except:
-                pass
-        elif cmd == '>':
-            try:
-                left.append(right.popleft())
-            except:
-                pass
-        elif cmd == '-':
-            try:
-                left.pop()
-            except:
-                pass
-        else:
-            left.append(cmd)
-            
+        try:
+            if cmd == '<': right.appendleft(left.pop())
+            elif cmd == '>': left.append(right.popleft())
+            elif cmd == '-': left.pop()
+            else: left.append(cmd)
+        except: pass
+
     return ''.join(left + right)
 
 for _ in range(int(input())):
-    left = deque()
-    right = deque()
-    password = list(input())
-    print(keyLoger(left, right, password))
+    left, right, password = deque(), deque(), list(input())
+    print(keyLogger(left, right, password))
+
