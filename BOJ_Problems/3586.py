@@ -9,6 +9,7 @@ class BaseFraction:
     def __eq__(self, other: 'BaseFraction') -> bool: return self.p == other.p and self.q == other.q
     def __neg__(self) -> 'BaseFraction': return BaseFraction(-self.p, self.q)
     def __str__(self) -> str: return str(self.p) + '/' + str(self.q) if self.q > 0 else str(-self.p) + '/' + str(-self.q)
+
 class AdvancedFraction:
     def __init__(self, a, b, c, d) -> None:
         self.a, self.b, self.c, self.d = a, b, c, d
@@ -20,6 +21,7 @@ class AdvancedFraction:
     def __truediv__(self, other: 'AdvancedFraction') -> 'AdvancedFraction':
         if other.a == BaseFraction(0, 1) and other.b == BaseFraction(0, 1): raise ZeroDivisionError()
         return self * AdvancedFraction(other.c, other.d, other.a, other.b)
+    
 def calculatePostFix(statement: list, *optional) -> AdvancedFraction:
     stack, x_in = [], [BaseFraction(0, 1), optional[0], BaseFraction(0, 1), BaseFraction(1, 1)] if optional else [1, 0, 0, 1]
     for e in statement:
@@ -32,6 +34,7 @@ def calculatePostFix(statement: list, *optional) -> AdvancedFraction:
         elif e == 'X': stack.append(AdvancedFraction(*x_in))
         else: stack.append(AdvancedFraction(0, int(e), 0, 1))
     return stack.pop()
+
 def computeLinearEquation(s: list):
     result = calculatePostFix(s)
     if result.a != BaseFraction(0, 1):
