@@ -26,13 +26,19 @@ def getDijkstraHackingTime(number_of_computers, connections, first_hacked_comput
     
     return hacking_times
 
-for _ in range(int(input())):
+def assignComputerConnections():
     number_of_computers, dependencies, first_hacked_computer = map(int, input().split())
-
     connections = {computer: [] for computer in range(1, number_of_computers + 1)}
     for _ in range(dependencies):
         to_computer, from_computer, hacking_time = map(int, input().split())
         connections[from_computer].append((to_computer, hacking_time))
     
-    results = getDijkstraHackingTime(number_of_computers, connections, first_hacked_computer)
-    print(*extractHackingResults(results))
+    return number_of_computers, connections, first_hacked_computer
+
+def main():
+    for _ in range(int(input())):
+        number_of_computers, connections, first_hacked_computer = assignComputerConnections()
+        results = getDijkstraHackingTime(number_of_computers, connections, first_hacked_computer)
+        print(*extractHackingResults(results))
+
+main()
