@@ -1,5 +1,5 @@
-from collections import deque
 import sys
+from collections import deque
 
 def calculateNodeColor(node_color):
     if node_color in [1, 2]: return node_color
