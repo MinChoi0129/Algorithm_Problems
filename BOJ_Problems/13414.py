@@ -1,4 +1,7 @@
-server = {}
+# from collections import OrderedDict
+
+
+server = dict()
 
 k, l = map(int, input().split())
 

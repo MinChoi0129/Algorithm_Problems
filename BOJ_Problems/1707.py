@@ -4,7 +4,6 @@ from collections import deque
 def calculateNodeColor(node_color):
     if node_color in [1, 2]: return node_color
     elif node_color >= 3: return node_color % 2
-    else: raise ValueError("Invalid node color")
 
 def isBipartiteGraph(connections, visited, start_node, node_color):
     Q = deque([(start_node, node_color)])
@@ -31,5 +30,5 @@ for _ in range(int(sys.stdin.readline())):
         connections[u].append(v)
         connections[v].append(u)
     
-    results = [isBipartiteGraph(connections, visited, start_node, 1) for start_node in range(1, v+1) if not visited[start_node]]
+    results = [isBipartiteGraph(connections, visited, start_node, 0) for start_node in range(1, v+1) if not visited[start_node]]
     print("YES" if False not in results else "NO")
