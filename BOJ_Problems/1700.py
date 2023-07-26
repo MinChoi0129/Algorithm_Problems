@@ -7,9 +7,7 @@ pop_count = 0
 for i in range(len(electric_devices)):
     device = electric_devices[i]
 
-    if device in plugged_devices: # 이미 꽂혀있는가?
-        continue
-    elif len(plugged_devices) < number_of_holes_of_power_strip: # 안 꽂혀있지만 빈자리가 있는가?
+    if device not in plugged_devices and len(plugged_devices) < number_of_holes_of_power_strip:
         plugged_devices.add(device)
     else: # 안 꽂혀있는데도 빈자리도 없음
         when_to_use = dict()
