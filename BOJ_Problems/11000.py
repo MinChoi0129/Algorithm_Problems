@@ -1,19 +1,15 @@
-from collections import deque
+import heapq
 
 n = int(input())
-lectures = sorted(tuple(map(int, input().split())) for _ in range(n))
+lectures = sorted(list(map(int, input().split())) for _ in range(n))
+first_start, first_end = lectures[0]
 
-if n == 1:
-    print(1)
-else:
-    answer = 1
-    Q = deque([lectures[0]])
-    for next_start, next_end in lectures[1:]:
-        current_start, current_end = Q.popleft()
-        if current_end <= next_start:
-            continue
-        else:
-            answer += 1
-            Q.append((current_start, current_end))
+heap = [first_end]
 
-    print(answer)
+for next_start, next_end in lectures[1:]:
+    current_end = heap[0]
+    if current_end <= next_start:
+        heapq.heappop(heap)
+    heapq.heappush(heap, next_end)
+
+print(len(heap))
