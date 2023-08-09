@@ -1,9 +1,17 @@
 from itertools import combinations as C
 import sys
 
+
+
 input = lambda : sys.stdin.readline().rstrip()
 
 n, tp_time = map(int, input().split())
+
+
+
+
+
+
 
 coordinates_of_cities, special_city_numbers = [None], set()
 for node in range(1, n + 1):
@@ -11,6 +19,13 @@ for node in range(1, n + 1):
     coordinates_of_cities.append((x, y))
     if is_special_city:
         special_city_numbers.add(node)
+
+
+
+
+
+
+
 
 INF = int(1e9)
 floyd_table = [[INF] * (n+1) for _ in range(n+1)]
@@ -30,11 +45,24 @@ for city_number, other_city_number in C(range(1, n + 1), 2):
         floyd_table[city_number][other_city_number] = taxi_time
         floyd_table[other_city_number][city_number] = taxi_time
 
+
+
+
+
+
+
+
+
+
+
 for center in range(1, n+1):
     for i in range(1, n+1):
         for j in range(1, n+1):
             if floyd_table[i][j] > floyd_table[i][center] + floyd_table[center][j]:
                 floyd_table[i][j] = floyd_table[i][center] + floyd_table[center][j]
+
+
+
 
 for _ in range(int(input())):
     a, b = map(int, input().split())
